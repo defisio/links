@@ -20,7 +20,11 @@ const socialLinks = [
     icon: InstagramIcon,
     label: "Instagram",
   },
-  { href: "mailto:contato@defisio.com", icon: EmailIcon, label: "Email" },
+  {
+    href: "mailto:debyrodrigues5678@gmail.com",
+    icon: EmailIcon,
+    label: "Email",
+  },
   // { href: "https://spotify.com", icon: SpotifyIcon, label: "Spotify" },
 ];
 

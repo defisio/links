@@ -25,10 +25,10 @@ const links = [
     description: "@deborae.fisio",
   },
   {
-    href: "mailto:contato@defisio.com",
+    href: "mailto:debyrodrigues5678@gmail.com",
     icon: <EmailIcon className="h-5 w-5" />,
     label: "E-mail",
-    description: "contato@defisio.com",
+    description: "debyrodrigues5678@gmail.com",
   },
   // {
   //   href: "https://youtube.com",
