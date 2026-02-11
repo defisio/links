@@ -21,7 +21,7 @@ export function ProfileHeader() {
         Débora Eduarda
       </h1>
       <p className="mt-1 font-mono text-sm text-primary">@deborae.fisio</p>
-      <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground text-pretty text-left">
+      <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground text-pretty text-center">
         Fisioterapia traumato-ortopédica esportiva, especializada em
         reabilitação de joelho <br />
       </p>
