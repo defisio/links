@@ -21,7 +21,7 @@ const socialLinks = [
     label: "Instagram",
   },
   {
-    href: "mailto:debyrodrigues5678@gmail.com",
+    href: "mailto:deboraeduardafisio@gmail.com",
     icon: EmailIcon,
     label: "Email",
   },
