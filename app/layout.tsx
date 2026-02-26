@@ -27,6 +27,11 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
+        {/* Google Site Verification */}
+        <meta
+          name="google-site-verification"
+          content="TlZ4Y09nkyMSakKU7FCUMyLwufE3v8tM6siD7ADIOR0"
+        />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
