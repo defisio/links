@@ -31,11 +31,11 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
           name="description"
-          content="Todos os meus links em um só lugar."
+          content="Fisioterapia em São Luís do Maranhão, especialista em reabilitação de joelho, traumato-ortopédica esportiva. Fisioterapeuta Débora Eduarda. Todos os meus links em um só lugar. Fisioterapia Joelho, Fisioterapia São Luís, Fisioterapeuta São Luís Maranhão."
         />
         <meta
           name="keywords"
-          content="Débora Eduarda, Fisioterapeuta, Links, Saúde, Instagram, Contato"
+          content="Débora Eduarda, Fisioterapeuta, Fisioterapia Joelho, Fisioterapia São Luís, Fisioterapeuta São Luís Maranhão, Fisioterapia Esportiva, Reabilitação de Joelho, Saúde, Instagram, Contato, Fisioterapia Traumato-Ortopédica, Fisioterapia em São Luís, Fisioterapia Ortopédica, Fisioterapia Especializada, Fisioterapeuta Maranhão"
         />
         <meta name="author" content="Débora Eduarda" />
         <link rel="icon" href={assetPath("/DE-Reduzida.svg")} />
@@ -78,7 +78,7 @@ export default function RootLayout({
               jobTitle: "Fisioterapeuta",
               sameAs: ["https://www.instagram.com/deborae.fisio"],
               description:
-                "Fisioterapia traumato-ortopédica esportiva, especializada em reabilitação de joelho",
+                "Fisioterapia em São Luís do Maranhão, especialista em reabilitação de joelho, traumato-ortopédica esportiva. Fisioterapeuta Débora Eduarda. Fisioterapia Joelho, Fisioterapia São Luís, Fisioterapeuta São Luís Maranhão.",
             }),
           }}
         />
