@@ -51,6 +51,8 @@ export default function RootLayout({
         />
         <meta name="geo.region" content="BR-MA" />
         <meta name="geo.placename" content="São Luís" />
+        <meta name="geo.position" content="-2.5297;-44.2963" />
+        <meta name="ICBM" content="-2.5297, -44.2963" />
         <link rel="icon" href={assetPath("/DE-Reduzida.svg")} />
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
@@ -141,32 +143,89 @@ export default function RootLayout({
             }),
           }}
         />
-        {/* Structured Data JSON-LD - HealthBusiness */}
+        {/* Structured Data JSON-LD - Physiotherapy (LocalBusiness) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "HealthAndBeautyBusiness",
-              name: "Fisioterapeuta Débora Eduarda",
+              "@type": [
+                "MedicalBusiness",
+                "HealthAndBeautyBusiness",
+                "LocalBusiness",
+              ],
+              "@id": "https://defisio.github.io/links/#business",
+              name: "Débora Eduarda - Fisioterapeuta Especialista em Joelho",
+              alternateName: "Fisioterapia Joelho São Luís",
               url: "https://defisio.github.io/links/",
               image: "https://defisio.github.io/links/DE3-Logo-Branco.png",
               telephone: "+5598991328659",
               email: "deboraeduardafisio@gmail.com",
               description:
-                "Fisioterapia especializada em joelho, traumato-ortopédica esportiva e reabilitação em São Luís do Maranhão.",
+                "Fisioterapeuta especialista em joelho em São Luís do Maranhão. Tratamento de LCA, menisco, condromalácia patelar, fisioterapia traumato-ortopédica e esportiva. Reabilitação pós-operatório de joelho.",
               address: {
                 "@type": "PostalAddress",
                 addressLocality: "São Luís",
                 addressRegion: "MA",
+                postalCode: "65000-000",
                 addressCountry: "BR",
               },
-              areaServed: {
-                "@type": "City",
-                name: "São Luís",
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: -2.5297,
+                longitude: -44.2963,
               },
+              areaServed: [
+                {
+                  "@type": "City",
+                  name: "São Luís",
+                  "@id": "https://www.wikidata.org/wiki/Q28441",
+                },
+                {
+                  "@type": "State",
+                  name: "Maranhão",
+                  "@id": "https://www.wikidata.org/wiki/Q42362",
+                },
+              ],
               priceRange: "$$",
-              medicalSpecialty: "Fisioterapia",
+              medicalSpecialty: [
+                "Fisioterapia Ortopédica",
+                "Fisioterapia Esportiva",
+                "Reabilitação de Joelho",
+              ],
+              hasOfferCatalog: {
+                "@type": "OfferCatalog",
+                name: "Serviços de Fisioterapia",
+                itemListElement: [
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Reabilitação de Joelho",
+                      description:
+                        "Tratamento especializado para lesões de joelho incluindo LCA, menisco e condromalácia",
+                    },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Fisioterapia Pós-Operatório",
+                      description: "Reabilitação após cirurgias de joelho",
+                    },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Fisioterapia Esportiva",
+                      description:
+                        "Tratamento e prevenção de lesões esportivas",
+                    },
+                  },
+                ],
+              },
+              sameAs: ["https://www.instagram.com/deborae.fisio"],
             }),
           }}
         />
