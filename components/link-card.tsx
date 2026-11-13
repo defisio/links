@@ -15,8 +15,8 @@ export function LinkCard({ href, icon, label, description, delay = 0 }: LinkCard
   return (
     <a
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      target={href.startsWith('/') ? undefined : '_blank'}
+      rel={href.startsWith('/') ? undefined : 'noopener noreferrer'}
       className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-4 transition-all duration-300 hover:border-primary/40 hover:bg-secondary hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/5 opacity-0 animate-fade-in-up"
       style={{ animationDelay: `${delay}ms` }}
     >

@@ -25,13 +25,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: yarn
+
+      - name: Enable project Yarn version
+        run: corepack enable
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
+
+      - name: Test timer
+        run: yarn test:tabata
 
       - name: Build
         run: yarn build
+
+      - name: Validate exported timer
+        run: yarn check:tabata-export
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

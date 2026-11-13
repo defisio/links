@@ -1,10 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export",
-  basePath: "/links", // Comentado para desenvolvimento local
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  basePath: "/links",
+  trailingSlash: true,
   images: {
     unoptimized: true,
   },

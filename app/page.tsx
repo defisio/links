@@ -1,6 +1,8 @@
 import { ProfileHeader } from "@/components/profile-header";
 import { LinkCard } from "@/components/link-card";
 import { SocialFooter } from "@/components/social-footer";
+import { Timer } from "lucide-react";
+import { assetPath } from "@/lib/utils";
 import {
   WhatsAppIcon,
   InstagramIcon,
@@ -29,6 +31,12 @@ const links = [
     icon: <EmailIcon className="h-5 w-5" />,
     label: "E-mail",
     description: "deboraeduardafisio@gmail.com",
+  },
+  {
+    href: assetPath("/timer/"),
+    icon: <Timer className="h-5 w-5" />,
+    label: "Tabata Timer",
+    description: "Seu tempo, seu ritmo. Monte seu treino.",
   },
   // {
   //   href: "https://youtube.com",

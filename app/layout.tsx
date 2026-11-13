@@ -16,6 +16,32 @@ export const metadata: Metadata = {
     "Débora Eduarda - Fisioterapeuta em São Luís do Maranhão | Especialista em Joelho",
   description:
     "Fisioterapeuta Débora Eduarda em São Luís - MA. Especialista em fisioterapia traumato-ortopédica esportiva e reabilitação de joelho. Agende sua consulta.",
+  alternates: { canonical: "https://defisio.github.io/links/" },
+  openGraph: {
+    title:
+      "Débora Eduarda - Fisioterapeuta em São Luís do Maranhão | Especialista em Joelho",
+    description:
+      "Especialista em reabilitação de joelho e fisioterapia traumato-ortopédica esportiva. Agende sua consulta.",
+    url: "https://defisio.github.io/links/",
+    siteName: "Débora Eduarda - Fisioterapeuta",
+    locale: "pt_BR",
+    type: "website",
+    images: [
+      {
+        url: "https://defisio.github.io/links/DE3-Logo-Branco.png",
+        width: 120,
+        height: 120,
+        alt: "Fisioterapeuta Débora Eduarda",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "Débora Eduarda - Fisioterapeuta em São Luís do Maranhão",
+    description:
+      "Especialista em reabilitação de joelho e fisioterapia traumato-ortopédica esportiva.",
+    images: ["https://defisio.github.io/links/DE3-Logo-Branco.png"],
+  },
   icons: {
     icon: assetPath("/DE-Reduzida.svg"),
   },
@@ -26,74 +52,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Extensions can add attributes before hydration. Limit suppression to the
+  // document shell; mismatches inside application components remain visible.
   return (
-    <html lang="pt-BR">
-      <head>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <head suppressHydrationWarning>
         {/* Google Site Verification */}
         <meta
           name="google-site-verification"
           content="TlZ4Y09nkyMSakKU7FCUMyLwufE3v8tM6siD7ADIOR0"
         />
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta
-          name="description"
-          content="Fisioterapeuta Débora Eduarda em São Luís - MA. Especialista em fisioterapia traumato-ortopédica esportiva e reabilitação de joelho. Atendimento personalizado em fisioterapia ortopédica, esportiva e pós-operatório de joelho. Agende sua consulta."
-        />
-        <meta
-          name="keywords"
-          content="Débora Eduarda, Fisioterapeuta, Fisioterapia Joelho, Fisioterapia São Luís, Fisioterapeuta São Luís Maranhão, Fisioterapia Esportiva, Reabilitação de Joelho, Fisioterapia Traumato-Ortopédica, Fisioterapia em São Luís, Fisioterapia Ortopédica, Fisioterapia Especializada, Fisioterapeuta Maranhão, Reabilitação Pós-Operatório Joelho, LCA, Ligamento Cruzado Anterior, Menisco, Condromalácia Patelar, Fisioterapia Esportiva São Luís, Dor no Joelho, Tratamento Joelho São Luís, Fisioterapeuta Ortopédica São Luís, Fisioterapeuta Esportiva Maranhão, Reabilitação Esportiva, Fisioterapia MA, Clínica de Fisioterapia São Luís, Ortopedia Joelho, Lesão Joelho, Fisioterapia Domiciliar São Luís"
-        />
-        <meta name="author" content="Débora Eduarda" />
-        <meta
-          name="robots"
-          content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
-        />
-        <meta name="geo.region" content="BR-MA" />
-        <meta name="geo.placename" content="São Luís" />
-        <meta name="geo.position" content="-2.5297;-44.2963" />
-        <meta name="ICBM" content="-2.5297, -44.2963" />
-        <link rel="icon" href={assetPath("/DE-Reduzida.svg")} />
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:site_name"
-          content="Débora Eduarda - Fisioterapeuta"
-        />
-        <meta property="og:url" content="https://defisio.github.io/links/" />
-        <meta
-          property="og:title"
-          content="Débora Eduarda - Fisioterapeuta em São Luís do Maranhão | Especialista em Joelho"
-        />
-        <meta
-          property="og:description"
-          content="Fisioterapeuta em São Luís - MA. Especialista em reabilitação de joelho, fisioterapia traumato-ortopédica esportiva. Agende sua consulta."
-        />
-        <meta
-          property="og:image"
-          content="https://defisio.github.io/links/DE3-Logo-Branco.png"
-        />
-        <meta property="og:image:width" content="120" />
-        <meta property="og:image:height" content="120" />
-        <meta property="og:image:alt" content="Fisioterapeuta Débora Eduarda" />
-        <meta property="og:locale" content="pt_BR" />
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary" />
-        <meta name="twitter:url" content="https://defisio.github.io/links/" />
-        <meta
-          name="twitter:title"
-          content="Débora Eduarda - Fisioterapeuta em São Luís do Maranhão"
-        />
-        <meta
-          name="twitter:description"
-          content="Fisioterapeuta em São Luís - MA. Especialista em reabilitação de joelho, fisioterapia traumato-ortopédica esportiva."
-        />
-        <meta
-          name="twitter:image"
-          content="https://defisio.github.io/links/DE3-Logo-Branco.png"
-        />
-        {/* Canonical */}
-        <link rel="canonical" href="https://defisio.github.io/links/" />
         {/* Structured Data JSON-LD - WebSite */}
         <script
           type="application/ld+json"
@@ -231,6 +200,7 @@ export default function RootLayout({
         />
       </head>
       <body
+        suppressHydrationWarning
         className={`${plusJakartaSans.variable} font-sans antialiased min-h-screen`}
       >
         {children}
