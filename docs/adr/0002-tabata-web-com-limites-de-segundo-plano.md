@@ -7,3 +7,5 @@ Essa decisão mantém a distribuição pela rota do site, em vez de exigir uma a
 Vibração e redução temporária do volume da música de outros aplicativos serão melhorias condicionadas às capacidades do aparelho. Sua indisponibilidade não impedirá iniciar o treino. Bipes e anúncios por voz serão configuráveis.
 
 Referências: [ciclo de vida no Chrome](https://developer.chrome.com/docs/web-platform/page-lifecycle-api), [suspensão no WebKit](https://webkit.org/blog/8970/how-web-content-can-affect-power-usage/), [Screen Wake Lock](https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API) e [Audio Session](https://developer.mozilla.org/en-US/docs/Web/API/AudioSession/type).
+
+Após o teste online no iPhone, o usuário passou a exigir bipes mesmo no silencioso e em segundo plano. O [ADR 0003](0003-bipes-como-faixa-de-audio.md) registra a mudança para uma faixa de mídia pré-renderizada. Os limites de suspensão continuam relevantes para a interface, a vibração e os novos anúncios de voz; os bipes da faixa não dependem de novos disparos por JavaScript.

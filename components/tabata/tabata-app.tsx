@@ -308,6 +308,10 @@ export function TabataApp() {
     "all",
   );
   const alerts = useRef<WorkoutAlerts | null>(null);
+  const audioControls = useRef<{ pause: () => void; resume: () => void }>({
+    pause() {},
+    resume() {},
+  });
   const timerPanel = useRef<HTMLElement>(null);
   const lastSignal = useRef("");
   const lastPhase = useRef("");
@@ -370,7 +374,12 @@ export function TabataApp() {
     return () => clearTimeout(id);
   }, [toast]);
   useEffect(() => {
-    alerts.current = new WorkoutAlerts();
+    alerts.current = new WorkoutAlerts({
+      mediaBase: assetPath("/timer/"),
+      onError: setNotice,
+      onPause: () => audioControls.current.pause(),
+      onResume: () => audioControls.current.resume(),
+    });
     return () => {
       alerts.current?.dispose();
       alerts.current = null;
@@ -398,7 +407,7 @@ export function TabataApp() {
   useEffect(() => {
     if (!audioOwner) return;
     if (active?.status === "paused") {
-      alerts.current?.silence();
+      alerts.current?.deactivate(true);
       return;
     }
     if (active?.status === "running" && phase && at) {
@@ -444,6 +453,8 @@ export function TabataApp() {
       )
         alerts.current.complete(data.preferences);
       wasHidden.current = false;
+    } else if (finished?.status === "interrupted") {
+      alerts.current?.deactivate();
     }
   }, [
     active,
@@ -502,11 +513,22 @@ export function TabataApp() {
       draft: { ...latest.draft, ...change },
     }));
   };
-  const preference = (key: keyof Preferences) =>
+  const preference = (key: keyof Preferences) => {
+    const next = { ...data.preferences, [key]: !data.preferences[key] };
+    if ((key === "sound" || key === "voice") && active?.status === "running") {
+      if (!next.sound && !next.voice) alerts.current?.deactivate();
+      else if (key === "sound") {
+        alerts.current?.prepareWorkout(next);
+        const at = position(active, Date.now());
+        alerts.current?.playWorkout(at.phases, at.elapsed, next, active.name);
+      } else void alerts.current?.enable(next);
+      if (!next.voice) alerts.current?.silence();
+    } else if (!next.sound && !next.voice) alerts.current?.deactivate();
     void mutate((latest) => ({
       ...latest,
-      preferences: { ...latest.preferences, [key]: !latest.preferences[key] },
+      preferences: { ...latest.preferences, [key]: next[key] },
     }));
+  };
   const loadWorkout = (workout: Workout, presetId: string | null = null) => {
     setEditingPresetId(presetId);
     updateDraft({ ...workout, exercises: [...workout.exercises] });
@@ -516,7 +538,6 @@ export function TabataApp() {
     flash("Treino carregado. Revise e toque em Iniciar.");
   };
   const start = (force = false, selected?: Workout) => {
-    alerts.current?.enable();
     const workout = selected ?? draft;
     if (!validWorkout(workout)) {
       setNotice(
@@ -524,8 +545,20 @@ export function TabataApp() {
       );
       return;
     }
+    if (active && !force) {
+      setDialog({
+        title: "Substituir o treino atual?",
+        description:
+          "A execução atual será registrada como interrompida e um novo treino começará.",
+        confirm: "Começar novo treino",
+        action: () => start(true, workout),
+      });
+      return;
+    }
+    alerts.current?.prepareWorkout(data.preferences);
     const id = createId();
     let conflict = false;
+    let created: Execution | undefined;
     void mutate((latest) => {
       const executions = latest.executions.map((e) => reconcile(e, Date.now()));
       const existing = executions.find(
@@ -535,17 +568,19 @@ export function TabataApp() {
         conflict = true;
         return { ...latest, executions };
       }
+      created = begin(workout, Date.now(), id);
       return {
         ...latest,
         executions: [
-          begin(workout, Date.now(), id),
+          created,
           ...executions.map((e) =>
             existing && e.id === existing.id ? interrupt(e, Date.now()) : e,
           ),
         ],
       };
     }).then(() => {
-      if (conflict)
+      if (conflict) {
+        alerts.current?.deactivate();
         setDialog({
           title: "Substituir o treino atual?",
           description:
@@ -553,7 +588,16 @@ export function TabataApp() {
           confirm: "Começar novo treino",
           action: () => start(true, workout),
         });
-      else {
+      } else {
+        if (created) {
+          const at = position(created, Date.now());
+          alerts.current?.playWorkout(
+            at.phases,
+            at.elapsed,
+            data.preferences,
+            created.name,
+          );
+        }
         setCompletedId(null);
         setMobilePanel("timer");
       }
@@ -568,10 +612,43 @@ export function TabataApp() {
         "Esta execução ficará no histórico como interrompida. Você pode repetir o treino quando quiser.",
       confirm: "Encerrar treino",
       action: () => {
-        alerts.current?.silence();
+        alerts.current?.deactivate();
         void updateExecution(id, (e) => interrupt(e, Date.now()));
       },
     });
+  };
+  const control = (action: "pause" | "resume" | "skip") => {
+    if (!active) return;
+    const changedAt = Date.now();
+    if (action === "pause") alerts.current?.deactivate(true);
+    else if (action === "resume" || active.status === "running")
+      alerts.current?.prepareWorkout(data.preferences);
+    let next: Execution | undefined;
+    void updateExecution(active.id, (execution) => {
+      next =
+        action === "pause"
+          ? pause(execution, changedAt)
+          : action === "resume"
+            ? resume(execution, changedAt)
+            : skip(execution, changedAt);
+      return next;
+    }).then(() => {
+      if (!next) return;
+      if (next.status === "running") {
+        const at = position(next, Date.now());
+        alerts.current?.playWorkout(
+          at.phases,
+          at.elapsed,
+          data.preferences,
+          next.name,
+        );
+      } else if (next.status === "paused") alerts.current?.deactivate(true);
+      else alerts.current?.stopWorkout();
+    });
+  };
+  audioControls.current = {
+    pause: () => control("pause"),
+    resume: () => control("resume"),
   };
   const restart = () => {
     if (!active) return;
@@ -664,13 +741,10 @@ export function TabataApp() {
     }
   };
   const testAlerts = () => {
-    alerts.current?.enable();
-    alerts.current?.transition(
-      timeline(CLASSIC)[2],
-      undefined,
-      data.preferences,
-    );
+    alerts.current?.test(data.preferences);
     flash("Teste de alertas iniciado.");
+    if (!active || active.status === "paused")
+      alerts.current?.deactivateAfter(4000);
   };
   const history = data.executions.filter(
     (e) =>
@@ -901,14 +975,9 @@ export function TabataApp() {
                   </button>
                   <button
                     className="tt-button primary tt-main-control"
-                    onClick={() => {
-                      alerts.current?.enable();
-                      void updateExecution(active.id, (e) =>
-                        e.status === "paused"
-                          ? resume(e, Date.now())
-                          : pause(e, Date.now()),
-                      );
-                    }}
+                    onClick={() =>
+                      control(active.status === "paused" ? "resume" : "pause")
+                    }
                   >
                     {active.status === "paused" ? (
                       <Play size={23} fill="currentColor" />
@@ -920,12 +989,7 @@ export function TabataApp() {
                   <button
                     className="tt-button secondary tt-square-control"
                     aria-label="Pular fase"
-                    onClick={() => {
-                      alerts.current?.enable();
-                      void updateExecution(active.id, (e) =>
-                        skip(e, Date.now()),
-                      );
-                    }}
+                    onClick={() => control("skip")}
                   >
                     <SkipForward size={22} />
                   </button>
@@ -947,6 +1011,17 @@ export function TabataApp() {
                   <span>{formatTime(totalMs(draft))}</span>
                 </button>
               )}
+              {active?.status === "running" &&
+                data.preferences.sound &&
+                !alerts.current?.hasWorkoutTrack && (
+                  <button
+                    className="tt-button secondary tt-audio-recovery"
+                    onClick={() => control("resume")}
+                  >
+                    <Volume2 size={16} />
+                    Ativar som deste treino
+                  </button>
+                )}
               <div className="tt-under-controls">
                 {active ? (
                   <>
@@ -1521,8 +1596,8 @@ export function TabataApp() {
           </button>
         </footer>
         <p className="tt-background-note">
-          Ao trocar de app ou bloquear a tela, o tempo é recuperado ao voltar.
-          Alertas em segundo plano dependem do navegador.
+          Bipes em segundo plano após iniciar o treino. Voz e vibração dependem
+          do navegador.
         </p>
       </div>
       {preferencesOpen && (
@@ -1579,6 +1654,11 @@ export function TabataApp() {
           <small>
             A voz offline e a redução do volume da música dependem do seu
             aparelho.
+          </small>
+          <small>
+            No iPhone, o som toca também no modo silencioso e pode pausar
+            músicas de outros apps. Use o volume de mídia para ajustar os
+            alertas.
           </small>
           <button
             className="tt-button primary"

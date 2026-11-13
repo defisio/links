@@ -20,6 +20,10 @@ async function prepareOffline() {
     ROOT + "icon-192.png",
     ROOT + "icon-512.png",
     ROOT + "icon-maskable.png",
+    ROOT + "ready.wav",
+    ROOT + "countdown.wav",
+    ROOT + "transition.wav",
+    ROOT + "complete.wav",
   ]);
   for (const match of html.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
     const url = new URL(

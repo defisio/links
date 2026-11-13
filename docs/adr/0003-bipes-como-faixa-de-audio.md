@@ -1,0 +1,13 @@
+# Reproduzir os bipes como uma faixa de áudio do treino
+
+O teste real no iPhone confirmou que o modo silencioso bloqueava os alertas e que os alertas disparados pelo JavaScript cessavam em segundo plano. O usuário pediu som também no silencioso e em segundo plano. Os bipes passam a ser renderizados localmente em uma faixa WAV e reproduzidos por um único elemento de mídia, iniciado e desbloqueado pelo toque do usuário, em vez de dependerem de temporizadores JavaScript para cada alerta.
+
+A faixa contém mudanças de fase, contagens finais e conclusão. Pausar interrompe o áudio; retomar e pular renderizam somente a sequência restante, sem repetir fases anteriores. Os controles de mídia, quando disponíveis, usam as mesmas operações do relógio. Ao recarregar uma execução, o botão Ativar som deste treino permite desbloquear o player sem reiniciar o treino.
+
+No Safari compatível, a sessão é configurada como `playback` antes de ativar o áudio, permitindo som no modo silencioso. Isso pode interromper música de outros aplicativos; a sessão anterior é restaurada ao pausar ou encerrar. Para Safari antigo sem Audio Session API, há arquivos de mídia para os alertas avulsos. Não há reprodução silenciosa em loop para tentar manter o navegador acordado.
+
+O formato PCM mono de 8 bits a 8 kHz usa aproximadamente 0,48 MB por minuto. A geração limita a duração restante a duas horas para limitar memória; acima disso o timer continua funcionando com alertas por JavaScript e informa a indisponibilidade da faixa de fundo. A faixa é um Blob temporário, não é enviada para servidor nem gravada no histórico. Os arquivos estáticos de alertas também entram no cache offline.
+
+Comandos por voz continuam usando SpeechSynthesis. Não fazem parte do WAV: seu funcionamento com a página suspensa permanece dependente do navegador. A continuidade real em iPhone precisa de teste físico; os testes automatizados validam a categoria de áudio, o conteúdo da faixa e os fluxos da interface em DOM simulado.
+
+Referências: [WebKit: modo silencioso e playback](https://bugs.webkit.org/show_bug.cgi?id=237322), [WebKit: ativação de mídia por elemento](https://webkit.org/blog/7734/auto-play-policy-changes-for-macos/) e [Audio Session](https://www.w3.org/TR/audio-session/).
