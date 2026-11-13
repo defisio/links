@@ -743,23 +743,8 @@ export function TabataApp() {
             </button>
           </div>
         )}
-        <nav className="tt-mobile-nav mt-4" aria-label="Visualização">
-          <button
-            className={mobilePanel === "timer" ? "selected" : ""}
-            onClick={() => setMobilePanel("timer")}
-          >
-            <Timer size={16} />
-            Cronômetro
-          </button>
-          <button
-            className={mobilePanel === "details" ? "selected" : ""}
-            onClick={() => setMobilePanel("details")}
-          >
-            <Settings2 size={16} />
-            Meus treinos
-          </button>
-        </nav>
-        <div className={`tt-workspace tt-show-${mobilePanel}`}>
+
+        <div className={`tt-workspace tt-show-${mobilePanel} mt-4`}>
           <section
             ref={timerPanel}
             className={`tt-timer-panel tt-phase-${phaseKind} ${active ? "tt-executing" : ""} ${isFinished ? "tt-complete" : ""}`}
@@ -1488,6 +1473,22 @@ export function TabataApp() {
             )}
           </aside>
         </div>
+        <nav className="tt-mobile-nav mt-4" aria-label="Visualização">
+          <button
+            className={mobilePanel === "timer" ? "selected" : ""}
+            onClick={() => setMobilePanel("timer")}
+          >
+            <Timer size={16} />
+            Cronômetro
+          </button>
+          <button
+            className={mobilePanel === "details" ? "selected" : ""}
+            onClick={() => setMobilePanel("details")}
+          >
+            <Settings2 size={16} />
+            Meus treinos
+          </button>
+        </nav>
         <footer className="tt-footer">
           {/* <span>
             <span className="tt-footer-star">✦</span>Pequenos intervalos.
