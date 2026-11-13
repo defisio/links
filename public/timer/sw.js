@@ -24,6 +24,8 @@ async function prepareOffline() {
     ROOT + "countdown.wav",
     ROOT + "transition.wav",
     ROOT + "complete.wav",
+    ROOT + "voice-test.wav",
+    ROOT + "unlock.wav",
   ]);
   for (const match of html.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
     const url = new URL(

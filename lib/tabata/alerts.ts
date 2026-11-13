@@ -1,6 +1,7 @@
 import type { Phase } from "./engine";
 import type { Preferences } from "./storage";
 import { renderWorkoutTrack } from "./audio-track";
+import { getPhaseVoices } from "./phase-voices";
 
 type AudioSession = { type: string };
 type AudioNavigator = Navigator & { audioSession?: AudioSession };
@@ -16,6 +17,8 @@ export class WorkoutAlerts {
   private context: AudioContext | null = null;
   private media: HTMLAudioElement | null = null;
   private track: HTMLAudioElement | null = null;
+  private voicePreview: HTMLAudioElement | null = null;
+  private nameTimer: ReturnType<typeof setTimeout> | null = null;
   private trackURL: string | null = null;
   private trackActive = false;
   private trackPending = false;
@@ -36,12 +39,16 @@ export class WorkoutAlerts {
   }
   prepareWorkout(preferences: AudioPreferences): Promise<boolean> {
     const ready = this.enable(preferences);
-    this.trackPending = preferences.sound;
+    this.trackPending = preferences.sound || preferences.voice;
     // Unlock the same media element while the actual tap is still active.
-    if (preferences.sound && !this.trackUnlocked && this.options.mediaBase) {
+    if (
+      (preferences.sound || preferences.voice) &&
+      !this.trackUnlocked &&
+      this.options.mediaBase
+    ) {
       try {
         this.track ??= new Audio();
-        this.track.src = `${this.options.mediaBase}ready.wav`;
+        this.track.src = `${this.options.mediaBase}${preferences.sound ? "ready" : "unlock"}.wav`;
         this.trackUnlocked = true;
         void Promise.resolve(this.track.play()).catch((error) => {
           if (error?.name !== "AbortError") {
@@ -62,13 +69,17 @@ export class WorkoutAlerts {
     preferences: AudioPreferences,
     name: string,
   ) {
-    if (!preferences.sound) {
+    if (!preferences.sound && !preferences.voice) {
       this.stopWorkout();
       return;
     }
     this.stopWorkout();
     try {
-      const { buffer } = renderWorkoutTrack(phases, offsetMs);
+      const { buffer } = renderWorkoutTrack(phases, offsetMs, {
+        sound: preferences.sound,
+        voice: preferences.voice,
+        voices: preferences.voice ? getPhaseVoices() : undefined,
+      });
       this.track ??= new Audio();
       this.track.preload = "auto";
       this.track.loop = false;
@@ -135,6 +146,8 @@ export class WorkoutAlerts {
     }
   }
   stopWorkout() {
+    if (this.nameTimer !== null) clearTimeout(this.nameTimer);
+    this.nameTimer = null;
     this.trackActive = false;
     this.trackPending = false;
     this.track?.pause();
@@ -332,7 +345,15 @@ export class WorkoutAlerts {
         this.beep(1200, 0.16, 0.26);
       }
     }
-    this.say("Teste de som.", preferences.voice);
+    if (preferences.voice && this.options.mediaBase) {
+      try {
+        this.voicePreview ??= new Audio();
+        this.voicePreview.src = `${this.options.mediaBase}voice-test.wav`;
+        void Promise.resolve(this.voicePreview.play()).catch((error) => this.failed(error));
+      } catch (error) {
+        this.failed(error);
+      }
+    }
     this.vibrate([90, 60, 90], preferences.vibration);
   }
   transition(
@@ -348,6 +369,26 @@ export class WorkoutAlerts {
       }
     }
     this.vibrate([90, 60, 90], preferences.vibration);
+    if (this.hasWorkoutTrack) {
+      if (this.nameTimer !== null) clearTimeout(this.nameTimer);
+      this.nameTimer = null;
+      // Fixed phase announcements are already in the media track. Only custom
+      // names use the browser voice, with the page visible and after that clip.
+      const name = phase.kind === "exercise" ? phase.exerciseName : nextExercise;
+      if (
+        preferences.voice && name &&
+        !/^Exercício \d+$/i.test(name) &&
+        document.visibilityState === "visible"
+      ) {
+        const duration = getPhaseVoices()[phase.kind].length / 8;
+        this.nameTimer = setTimeout(() => {
+          this.nameTimer = null;
+          if (this.active && document.visibilityState === "visible")
+            this.say(phase.kind === "exercise" ? name : `A seguir: ${name}.`, true);
+        }, duration + 160);
+      }
+      return;
+    }
     this.say(
       phase.kind === "exercise"
         ? `${phase.exerciseName}. Comece!`
@@ -356,6 +397,10 @@ export class WorkoutAlerts {
     );
   }
   complete(preferences: Preferences) {
+    if (this.trackActive) {
+      this.vibrate([140, 80, 140], preferences.vibration);
+      return;
+    }
     if (preferences.sound && !this.trackActive) {
       if (this.media) void this.playMedia("complete");
       else
@@ -377,6 +422,8 @@ export class WorkoutAlerts {
     }
   }
   silence() {
+    if (this.nameTimer !== null) clearTimeout(this.nameTimer);
+    this.nameTimer = null;
     try {
       window.speechSynthesis?.cancel();
       navigator.vibrate?.(0);
@@ -405,6 +452,7 @@ export class WorkoutAlerts {
     }
     this.oscillators.clear();
     this.media?.pause();
+    this.voicePreview?.pause();
     if (this.context?.state === "running")
       void this.context.suspend().catch(() => {});
     if (this.session && this.previousSessionType !== null) {
@@ -436,6 +484,7 @@ export class WorkoutAlerts {
     void this.context?.close().catch(() => {});
     this.context = null;
     this.media = null;
+    this.voicePreview = null;
     this.channel?.close();
     this.channel = null;
   }

@@ -517,11 +517,11 @@ export function TabataApp() {
     const next = { ...data.preferences, [key]: !data.preferences[key] };
     if ((key === "sound" || key === "voice") && active?.status === "running") {
       if (!next.sound && !next.voice) alerts.current?.deactivate();
-      else if (key === "sound") {
+      else {
         alerts.current?.prepareWorkout(next);
         const at = position(active, Date.now());
         alerts.current?.playWorkout(at.phases, at.elapsed, next, active.name);
-      } else void alerts.current?.enable(next);
+      }
       if (!next.voice) alerts.current?.silence();
     } else if (!next.sound && !next.voice) alerts.current?.deactivate();
     void mutate((latest) => ({
@@ -1012,7 +1012,7 @@ export function TabataApp() {
                 </button>
               )}
               {active?.status === "running" &&
-                data.preferences.sound &&
+                (data.preferences.sound || data.preferences.voice) &&
                 !alerts.current?.hasWorkoutTrack && (
                   <button
                     className="tt-button secondary tt-audio-recovery"
@@ -1596,8 +1596,7 @@ export function TabataApp() {
           </button>
         </footer>
         <p className="tt-background-note">
-          Bipes em segundo plano após iniciar o treino. Voz e vibração dependem
-          do navegador.
+          Bipes e avisos de fase em segundo plano após iniciar o treino.
         </p>
       </div>
       {preferencesOpen && (
@@ -1623,7 +1622,7 @@ export function TabataApp() {
             checked={data.preferences.voice}
             onChange={() => preference("voice")}
             title="Comandos por voz"
-            description="Anuncia a fase e o exercício"
+            description="Avisos de fase também em segundo plano"
             icon={<Mic size={18} />}
           />
           <Toggle
@@ -1652,8 +1651,8 @@ export function TabataApp() {
             Testar alertas
           </button>
           <small>
-            A voz offline e a redução do volume da música dependem do seu
-            aparelho.
+            Os avisos de fase funcionam offline. Nomes personalizados dos
+            exercícios são anunciados com o app aberto.
           </small>
           <small>
             No iPhone, o som toca também no modo silencioso e pode pausar

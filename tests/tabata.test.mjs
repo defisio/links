@@ -257,7 +257,7 @@ test("voice, beeps and vibration start enabled", () => {
 test("alert ownership transfers without repeating already emitted phase signals", async () => {
   const { WorkoutAlerts } = await import(
     asModule(
-      compile("../lib/tabata/alerts.ts").replace(
+      compile("../lib/tabata/alerts.ts").replace(/from ['"]\.\/phase-voices['"]/, `from '${asModule(compile("../lib/tabata/phase-voices.ts"))}'`).replace(
         /from ['"]\.\/audio-track['"]/,
         `from '${asModule(compile("../lib/tabata/audio-track.ts"))}'`,
       ),

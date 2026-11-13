@@ -23,10 +23,10 @@ Abrir o mesmo endereço. O servidor de preview e o desenvolvimento usam `/links`
 
 ## Verificações realizadas
 
-- `npm run test:tabata`: **39 testes passaram**. Cobrem sequência, descanso final e entre séries, fases zero, nomes, passagem real do tempo, pausas, saltos, conclusão, interrupção, independência de configurações, retenção de favoritas, validação de armazenamento, geração de IDs sem `randomUUID`, preferências iniciais e deduplicação de alertas entre emissores. Incluem testes do worker, da política de áudio do iPhone e da faixa completa de bipes, além dos controles reais da interface em DOM simulado.
+- `npm run test:tabata`: **44 testes passaram**. Cobrem sequência, descanso final e entre séries, fases zero, nomes, passagem real do tempo, pausas, saltos, conclusão, interrupção, independência de configurações, retenção de favoritas, validação de armazenamento, geração de IDs sem `randomUUID`, preferências iniciais e deduplicação de alertas entre emissores. Incluem testes do worker, da política de áudio do iPhone e da faixa completa de bipes e avisos falados, além dos controles reais da interface em DOM simulado.
 - `npm run typecheck`: passou.
 - `npm run build`: passou, incluindo a verificação de tipos e a exportação estática das rotas. Foi removida a configuração anterior que ignorava erros de TypeScript.
-- `npm run check:tabata-export`: passou. O worker foi exercitado com o HTML e os arquivos reais da exportação em um ambiente simulado, verificando **26 recursos** offline, incluindo scripts, estilos, fontes, ícones e arquivos de áudio. Também verifica manifesto, cache específico do build, acesso ao timer pela home e canonical único da rota.
+- `npm run check:tabata-export`: passou. O worker foi exercitado com o HTML e os arquivos reais da exportação em um ambiente simulado, verificando **28 recursos** offline, incluindo scripts, estilos, fontes, ícones e arquivos de áudio. Também verifica manifesto, cache específico do build, acesso ao timer pela home e canonical único da rota.
 - Verificação HTTP no servidor de preview: página inicial `/links/`, `/links/timer/` e acesso direto sem barra final são verificados; a antiga rota `/links/tabata/` retornou 404; os **15 recursos vinculados** pelo HTML retornaram sucesso. O manifesto, o tipo de conteúdo e a resposta HEAD do worker também passaram.
 - `git diff --check`: passou.
 
@@ -43,7 +43,7 @@ Ainda precisam de validação manual em iPhone e Android: aparência em retrato/
 - `lib/tabata/engine.ts`: sequência e operações puras do relógio.
 - `lib/tabata/storage.ts`: formato versionado, validação e retenção local.
 - `lib/tabata/alerts.ts`: bipes sintetizados, voz, vibração e deduplicação.
-- `lib/tabata/audio-track.ts`: renderização local da sequência de bipes em WAV para o player de mídia.
+- `lib/tabata/audio-track.ts`: renderização local da sequência de bipes e avisos de fase em WAV para o player de mídia.
 - `public/timer/`: manifesto, ícones e worker offline.
 - `scripts/`: preparação do worker por build, verificação da exportação e servidor de preview.
 - `tests/`: verificações automatizadas do domínio, da persistência e do worker.
@@ -78,4 +78,4 @@ O usuário confirmou em teste físico que retirar o silencioso fazia o som volta
 
 Para segundo plano, a sequência completa restante de bipes é renderizada em WAV e entregue ao player de mídia previamente desbloqueado pelo toque. Pausa, retomada, salto de fase, botão de som, controles de mídia e recuperação após recarga foram verificados com o componente e hook reais em JSDOM. O teste confirma também que ocultar a página não pausa o player e que as operações não criam execuções duplicadas. Outro teste simula a exigência de gesto por elemento, conferindo que o mesmo player desbloqueado é reutilizado depois da persistência assíncrona.
 
-Os testes inspecionam o WAV para verificar alertas futuros e offsets de retomada/salto, sem executar temporizadores para produzir os bipes. Isso não equivale a ouvir o áudio em um iPhone físico. Após publicar, verificar no aparelho: silencioso ligado, volume de mídia audível, treino iniciado por toque, alternância de app e bloqueio da tela. Voz e vibração permanecem dependentes das capacidades e da suspensão pelo Safari. Ver [ADR 0003](adr/0003-bipes-como-faixa-de-audio.md).
+Os testes inspecionam o WAV para verificar alertas futuros e offsets de retomada/salto, sem executar temporizadores para produzir os bipes. Isso não equivale a ouvir o áudio em um iPhone físico. Após publicar, verificar no aparelho: silencioso ligado, volume de mídia audível, treino iniciado por toque, alternância de app e bloqueio da tela. O usuário confirmou os bipes em segundo plano. Depois de informar que as vozes não continuavam, os avisos padrão de fase passaram a integrar o mesmo WAV. Os novos testes verificam a presença dos samples reais de cada frase, voz sem bipes, alteração independente das opções, retomada sem repetir avisos antigos e ausência de SpeechSynthesis para fases padrão. Os nomes personalizados continuam via SpeechSynthesis com o app aberto; a vibração depende do aparelho. Os novos avisos ainda precisam ser ouvidos em iPhone físico. Ver [ADR 0003](adr/0003-bipes-como-faixa-de-audio.md).

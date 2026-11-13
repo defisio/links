@@ -24,6 +24,11 @@ new Script(trackSource).runInNewContext({
   Uint8Array,
   DataView,
 });
+const voiceExports = {};
+new Script(ts.transpileModule(
+  readFileSync(new URL("../lib/tabata/phase-voices.ts", import.meta.url), "utf8"),
+  { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } },
+).outputText).runInNewContext({ exports: voiceExports, atob });
 const compiled = ts.transpileModule(
   readFileSync(new URL("../lib/tabata/alerts.ts", import.meta.url), "utf8"),
   {
@@ -130,7 +135,7 @@ function audioEnvironment({
     exports,
     module: { exports },
     navigator,
-    require: () => trackExports,
+    require: name => name === "./phase-voices" ? voiceExports : trackExports,
     URL,
     Blob,
     window: { AudioContext: Context },
@@ -233,6 +238,24 @@ test("the soundtrack reuses the media element unlocked by the tap after async wo
     0,
     "Do not duplicate the prerecorded cues with JS-timed oscillators",
   );
+  assert.deepEqual(logs.errors, []);
+  alerts.dispose();
+});
+
+test("voice-only workouts unlock and play prerecorded phase announcements without SpeechSynthesis", async () => {
+  const { alerts, logs, setGesture } = audioEnvironment();
+  const voiceOnly = { ...preferences, sound: false, voice: true };
+  const ready = alerts.prepareWorkout(voiceOnly);
+  setGesture(false);
+  await ready;
+  alerts.playWorkout([{ kind: "exercise", start: 0, end: 20000, duration: 20 }], 0, voiceOnly, "Voz");
+  await flush();
+  assert.ok(logs.media.some(src => src.endsWith("/unlock.wav")));
+  assert.ok(logs.media.some(src => src.startsWith("blob:")));
+  assert.equal(alerts.hasWorkoutTrack, true);
+  alerts.transition({kind: "exercise", exerciseName: "Exercício 1"}, undefined, voiceOnly);
+  alerts.complete(voiceOnly);
+  assert.equal(logs.tones.length, 0);
   assert.deepEqual(logs.errors, []);
   alerts.dispose();
 });

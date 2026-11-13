@@ -141,7 +141,8 @@ test("real timer controls keep the background track aligned across hide, pause, 
     close() {}
   }
   dom.window.AudioContext = Context;
-  const speech = { cancel() {}, getVoices: () => [], speak() {} };
+  const spoken = [];
+  const speech = { cancel() {}, getVoices: () => [], speak: utterance => spoken.push(utterance.text) };
   dom.window.speechSynthesis = speech;
   class Utterance {
     constructor(text) {
@@ -219,9 +220,14 @@ test("real timer controls keep the background track aligned across hide, pause, 
     assert.equal(data().preferences.sound, false);
     assert.equal(
       player.paused,
-      true,
-      "Muting must stop the pre-rendered audio too",
+      false,
+      "Voice must keep playing when only beeps are disabled",
     );
+    await click('[aria-label="Desativar voz"]');
+    assert.equal(player.paused, true, "Disabling both preferences stops the track");
+    await click('[aria-label="Ativar voz"]');
+    assert.equal(player.paused, false, "Voice-only playback must restart the remaining track");
+    assert.deepEqual(spoken, [], "Standard phase voices must not depend on SpeechSynthesis");
     await click('[aria-label="Ativar bipes"]');
     assert.equal(player.paused, false);
     await act(async () => actions.get("pause")());
