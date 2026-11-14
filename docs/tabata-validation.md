@@ -23,7 +23,7 @@ Abrir o mesmo endereço. O servidor de preview e o desenvolvimento usam `/links`
 
 ## Verificações realizadas
 
-- `npm run test:tabata`: **44 testes passaram**. Cobrem sequência, descanso final e entre séries, fases zero, nomes, passagem real do tempo, pausas, saltos, conclusão, interrupção, independência de configurações, retenção de favoritas, validação de armazenamento, geração de IDs sem `randomUUID`, preferências iniciais e deduplicação de alertas entre emissores. Incluem testes do worker, da política de áudio do iPhone e da faixa completa de bipes e avisos falados, além dos controles reais da interface em DOM simulado.
+- `npm run test:tabata`: **49 testes passaram**. Cobrem sequência, descanso final e entre séries, fases zero, nomes, passagem real do tempo, pausas, saltos, conclusão, interrupção, independência de configurações, retenção de favoritas, validação de armazenamento, geração de IDs sem `randomUUID`, preferências iniciais e deduplicação de alertas entre emissores. Incluem testes do worker, da política de áudio do iPhone e da faixa completa de bipes e avisos falados, além dos controles reais da interface em DOM simulado.
 - `npm run typecheck`: passou.
 - `npm run build`: passou, incluindo a verificação de tipos e a exportação estática das rotas. Foi removida a configuração anterior que ignorava erros de TypeScript.
 - `npm run check:tabata-export`: passou. O worker foi exercitado com o HTML e os arquivos reais da exportação em um ambiente simulado, verificando **25 recursos** offline, incluindo scripts, estilos, fontes, ícones e arquivos de áudio. Também verifica manifesto, cache específico do build, acesso ao timer pela home e canonical único da rota.
@@ -89,3 +89,9 @@ A suíte existente de 44 testes e a checagem de tipos passaram. Uma verificaçã
 ## Preparação nos cards e build de publicação
 
 A linha dos modelos agora mostra preparação, exercício, descanso e repetições, nessa ordem, usando os valores salvos. Na publicação dessa correção, o build do Turbopack falhou ao processar URLs de fonte do Google com parâmetros, com os erros `next/font/google queries have exactly one entry` e `Cannot resolve @vercel/turbopack-next/internal/font/google/font`. O script de produção passou a usar `next build --webpack`, opção suportada pela versão instalada do Next.js. O build com Webpack, a checagem TypeScript incorporada, os 44 testes e os 25 recursos da exportação offline passaram localmente. O desenvolvimento continua utilizando o comando existente.
+
+## Áudios fornecidos pelo usuário
+
+Os onze arquivos foram padronizados em MP3 mono, 24 kHz, 64 kbps, com cortes de pausas, ajuste de volume, verificação de amplitude e preservação dos originais. Total de 119.332 bytes nas cópias, 88,1% menor. A pedido do usuário, o relógio foi incorporado a todas as fases da faixa de mídia e é reduzido durante as falas. A mistura passou a 16 kHz para preservar mais detalhe.
+
+Os 49 testes e a checagem de tipos passaram. Os novos casos conferem relógio entre os avisos, fim do relógio antes da cauda de conclusão, alinhamento do loop ao retomar, controle de som independente e redução do relógio sob a voz. A prévia de 28 segundos usa o renderer real e não contém samples saturados. A conferência por ffprobe confirmou o mesmo codec, taxa, canais e bitrate nos onze MP3s; os hashes confirmaram os originais intactos. A revisão auditiva no iPhone permanece necessária.

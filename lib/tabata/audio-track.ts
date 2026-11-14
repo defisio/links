@@ -1,12 +1,13 @@
 import type { Phase } from "./engine";
 
-export const TRACK_SAMPLE_RATE = 8000;
+export const TRACK_SAMPLE_RATE = 16000;
 const MAX_TRACK_MS = 2 * 60 * 60 * 1000;
 const FINISH_MS = 3000;
 export interface TrackAudioOptions {
   sound?: boolean;
   voice?: boolean;
   voices?: Partial<Record<Phase["kind"] | "complete", Uint8Array>>;
+  effects?: Partial<Record<"clock" | "countdown" | "transition" | "complete", Uint8Array>>;
 }
 
 /** A real workout soundtrack: the media player handles future cues without JS timers. */
@@ -45,6 +46,18 @@ export function renderWorkoutTrack(
   text(36, "data");
   view.setUint32(40, samples, true);
   bytes.fill(128, 44);
+  const clock = options.sound !== false ? options.effects?.clock : undefined;
+  if (clock?.length) {
+    const finish = Math.round(remaining * TRACK_SAMPLE_RATE / 1000);
+    const from = Math.round(offset * TRACK_SAMPLE_RATE / 1000);
+    const fade = Math.round(TRACK_SAMPLE_RATE * .008);
+    for (let i = 0; i < finish; i++) {
+      const envelope = Math.min(1, i / fade, (finish - i - 1) / fade);
+      bytes[44 + i] = 128 + Math.round(
+        (clock[(from + i) % clock.length] - 128) * .18 * envelope,
+      );
+    }
+  }
   const speech = (
     absoluteMs: number,
     clip: Uint8Array | undefined,
@@ -59,9 +72,21 @@ export function renderWorkoutTrack(
     );
     for (let i = 0; i < count && start + i < samples; i++) {
       const source = clip[Math.min(clip.length - 1, Math.floor(i * clip.length / count))];
+      // The background clock is already present. Lower it under each voice clip.
+      if (clock?.length)
+        bytes[44 + start + i] = 128 + Math.round((bytes[44 + start + i] - 128) * .25);
       bytes[44 + start + i] = Math.max(
         0, Math.min(255, bytes[44 + start + i] + source - 128),
       );
+    }
+  };
+  const effect = (absoluteMs: number, clip: Uint8Array, gain: number) => {
+    if (options.sound === false || absoluteMs < offset) return;
+    const start = Math.round((absoluteMs - offset) * TRACK_SAMPLE_RATE / 1000);
+    for (let i = 0; i < clip.length && start + i < samples; i++) {
+      bytes[44 + start + i] = Math.max(0, Math.min(255,
+        bytes[44 + start + i] + Math.round((clip[i] - 128) * gain),
+      ));
     }
   };
   const tone = (absoluteMs: number, frequency: number, lengthMs: number) => {
@@ -92,14 +117,24 @@ export function renderWorkoutTrack(
         ? offset
         : phase.start;
     speech(start + 60, options.voices?.[phase.kind], phase.end - start - 80);
-    tone(start, phase.kind === "exercise" ? 1050 : 800, 220);
-    if (start >= offset) tone(start + 260, 1200, 160);
+    if (options.effects?.transition) {
+      effect(start, options.effects.transition, options.voice ? .18 : .65);
+    } else {
+      tone(start, phase.kind === "exercise" ? 1050 : 800, 220);
+      if (start >= offset) tone(start + 260, 1200, 160);
+    }
     for (const seconds of [3, 2, 1]) {
-      if (phase.duration >= seconds) tone(phase.end - seconds * 1000, 650, 130);
+      if (phase.duration < seconds) continue;
+      const at = phase.end - seconds * 1000;
+      if (options.effects?.countdown)
+        effect(at, options.effects.countdown, .8);
+      else tone(at, 650, 130);
     }
   }
   speech(end + 60, options.voices?.complete, FINISH_MS - 120);
-  [700, 900, 1200].forEach((frequency, index) =>
+  if (options.effects?.complete)
+    effect(end, options.effects.complete, options.voice ? .22 : .7);
+  else [700, 900, 1200].forEach((frequency, index) =>
     tone(end + index * 220, frequency, 250),
   );
   return { buffer, durationMs };

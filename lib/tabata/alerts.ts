@@ -1,7 +1,7 @@
 import type { Phase } from "./engine";
 import type { Preferences } from "./storage";
-import { renderWorkoutTrack } from "./audio-track";
-import { getPhaseVoices } from "./phase-voices";
+import { renderWorkoutTrack, TRACK_SAMPLE_RATE } from "./audio-track";
+import { getPhaseVoices, getWorkoutEffects } from "./phase-voices";
 
 type AudioSession = { type: string };
 type AudioNavigator = Navigator & { audioSession?: AudioSession };
@@ -48,7 +48,7 @@ export class WorkoutAlerts {
     ) {
       try {
         this.track ??= new Audio();
-        this.track.src = `${this.options.mediaBase}${preferences.sound ? "ready" : "unlock"}.wav`;
+        this.track.src = `${this.options.mediaBase}unlock.wav`;
         this.trackUnlocked = true;
         void Promise.resolve(this.track.play()).catch((error) => {
           if (error?.name !== "AbortError") {
@@ -79,6 +79,7 @@ export class WorkoutAlerts {
         sound: preferences.sound,
         voice: preferences.voice,
         voices: preferences.voice ? getPhaseVoices() : undefined,
+        effects: preferences.sound ? getWorkoutEffects() : undefined,
       });
       this.track ??= new Audio();
       this.track.preload = "auto";
@@ -339,8 +340,11 @@ export class WorkoutAlerts {
   test(preferences: Preferences) {
     void this.enable(preferences);
     if (preferences.sound) {
-      if (this.media) void this.playMedia("transition");
-      else {
+      if (this.options.mediaBase) {
+        this.media ??= new Audio();
+        this.media.muted = false;
+        void this.playMedia("transition");
+      } else {
         this.beep(800, 0.22);
         this.beep(1200, 0.16, 0.26);
       }
@@ -380,7 +384,7 @@ export class WorkoutAlerts {
         !/^Exercício \d+$/i.test(name) &&
         document.visibilityState === "visible"
       ) {
-        const duration = getPhaseVoices()[phase.kind].length / 8;
+        const duration = getPhaseVoices()[phase.kind].length / TRACK_SAMPLE_RATE * 1000;
         this.nameTimer = setTimeout(() => {
           this.nameTimer = null;
           if (this.active && document.visibilityState === "visible")

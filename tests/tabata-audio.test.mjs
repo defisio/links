@@ -259,3 +259,14 @@ test("voice-only workouts unlock and play prerecorded phase announcements withou
   assert.deepEqual(logs.errors, []);
   alerts.dispose();
 });
+
+test("Test alerts uses the user recordings for both sound and voice", async () => {
+  const {alerts,logs}=audioEnvironment();
+  alerts.test({...preferences,voice:true});
+  await flush();
+  assert.ok(logs.media.some(src=>src.endsWith("/transition.wav")));
+  assert.ok(logs.media.some(src=>src.endsWith("/voice-test.wav")));
+  assert.equal(logs.tones.length,0);
+  assert.deepEqual(logs.errors,[]);
+  alerts.dispose();
+});

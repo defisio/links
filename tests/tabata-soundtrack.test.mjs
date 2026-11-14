@@ -35,6 +35,7 @@ test("background track is valid PCM WAV containing future alerts without running
   assert.equal(new TextDecoder().decode(new Uint8Array(buffer, 0, 4)), "RIFF");
   assert.equal(header.getUint32(24, true), TRACK_SAMPLE_RATE);
   assert.equal(header.getUint16(34, true), 8);
+  assert.equal(TRACK_SAMPLE_RATE, 16000);
   assert.equal(durationMs, 23000);
   for (const at of [
     0, 2000, 3000, 4000, 5000, 12000, 13000, 14000, 15000, 17000, 18000, 19000,
@@ -94,7 +95,7 @@ const voiceSource = ts.transpileModule(
   readFileSync(new URL("../lib/tabata/phase-voices.ts", import.meta.url), "utf8"),
   { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } },
 ).outputText;
-const { getPhaseVoices, PHASE_VOICE_TEXT } = await import(
+const { getPhaseVoices, getWorkoutEffects, AUDIO_ASSET_SAMPLE_RATE, PHASE_VOICE_TEXT } = await import(
   `data:text/javascript;base64,${Buffer.from(voiceSource).toString("base64")}`
 );
 test("all packaged Portuguese phase voices are non-silent and present in the resulting media samples", () => {
@@ -102,7 +103,7 @@ test("all packaged Portuguese phase voices are non-silent and present in the res
   assert.equal(Object.keys(voices).length, 8);
   for (const [kind, clip] of Object.entries(voices)) {
     assert.ok(PHASE_VOICE_TEXT[kind]);
-    assert.ok(clip.length > 4000 && clip.length < 16000);
+    assert.ok(clip.length > TRACK_SAMPLE_RATE / 2 && clip.length < TRACK_SAMPLE_RATE * 2);
     assert.ok(clip.some(value => Math.abs(value - 128) > 20));
     if (kind === "test") continue;
     const { buffer } = renderWorkoutTrack([
@@ -121,4 +122,46 @@ test("voice-only recovery skips past announcements and keeps the next phase at i
   assert.equal(hasTone(buffer, 0, 3000), false);
   assert.ok(hasTone(buffer, 8060, 1500));
   assert.ok(hasTone(buffer, 13060, 1500));
+});
+
+test("continuous clock is embedded throughout phases and stops before the finish tail", () => {
+  const clock = new Uint8Array(TRACK_SAMPLE_RATE).fill(128);
+  clock.fill(200, 0, TRACK_SAMPLE_RATE / 5);
+  const { buffer } = renderWorkoutTrack(phases, 0, {sound: true, effects: {clock}});
+  assert.ok(hasTone(buffer, 8000), "Clock must keep playing between phase cues without JS");
+  assert.equal(hasTone(buffer, 21000), false, "Clock ends with the workout");
+});
+test("continuous clock is muted independently from voice and keeps its timeline position on resume", () => {
+  const clock = new Uint8Array(TRACK_SAMPLE_RATE).fill(128);
+  clock.fill(200, 0, TRACK_SAMPLE_RATE / 5);
+  const options = {sound:true, effects:{clock}};
+  const full = renderWorkoutTrack(phases, 0, options).buffer;
+  const resumed = renderWorkoutTrack(phases, 7050, options).buffer;
+  const start = Math.round(20 * TRACK_SAMPLE_RATE / 1000);
+  assert.deepEqual(new Uint8Array(resumed,44+start,400),new Uint8Array(full,44+Math.round(7070*TRACK_SAMPLE_RATE/1000),400));
+  const muted = renderWorkoutTrack(phases, 0, {...options,sound:false,voice:true}).buffer;
+  assert.equal(hasTone(muted,8000),false);
+});
+test("clock becomes quieter beneath a recorded phase announcement", () => {
+  const clock=new Uint8Array(TRACK_SAMPLE_RATE).fill(200);
+  const voice=new Uint8Array(TRACK_SAMPLE_RATE/2).fill(180);
+  const {buffer}=renderWorkoutTrack(phases,0,{sound:true,voice:true,voices:{preparation:voice},effects:{clock,transition:new Uint8Array(0)}});
+  const bytes=new Uint8Array(buffer,44);
+  const before=bytes[Math.round(.8*TRACK_SAMPLE_RATE)];
+  const during=bytes[Math.round(.1*TRACK_SAMPLE_RATE)]-(180-128);
+  assert.ok(during<before,"Do not mask the announcement with the clock");
+});
+
+test("packaged effects match offline previews and the media-track sample rate", () => {
+  assert.equal(AUDIO_ASSET_SAMPLE_RATE, TRACK_SAMPLE_RATE);
+  const effects = getWorkoutEffects();
+  assert.deepEqual(Object.keys(effects).sort(), ["clock","complete","countdown","transition"]);
+  for (const key of ["complete","countdown","transition"]) {
+    const file=readFileSync(new URL(`../public/timer/${key}.wav`,import.meta.url));
+    assert.equal(file.readUInt32LE(24),TRACK_SAMPLE_RATE);
+    assert.deepEqual(new Uint8Array(file.subarray(44)),effects[key]);
+  }
+  const {buffer}=renderWorkoutTrack(phases,0,{sound:true,voice:true,voices:getPhaseVoices(),effects});
+  assert.ok(hasTone(buffer,8000,300),"The actual clock recording must play between announcements");
+  assert.equal(new Uint8Array(buffer,44).some(value=>value===0||value===255),false,"Keep headroom when all recorded clips are mixed");
 });

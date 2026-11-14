@@ -1,21 +1,35 @@
-# Avisos de fase em português
+# Áudios do timer
 
-Os avisos fixos foram gerados localmente em 13/11/2026 com [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M), modelo v1.0 sob Apache-2.0, e a implementação [kokoro](https://github.com/hexgrad/kokoro), versão 0.9.4. Foi usada a voz brasileira `pf_dora`, listada no [catálogo de vozes](https://huggingface.co/hexgrad/Kokoro-82M/blob/main/VOICES.md). O modelo tem SHA256 `496dba118d1a58f5f3db2efc88dbdc216e0483fc89fe6e47ee1f2c53f18ad1e4` conforme o card do modelo.
+Os áudios atuais foram fornecidos pelo usuário na pasta local `Music/Musicas`: oito falas em português, `ready.m4a`, `complete.m4a` e `ClockBackground.wav`. Substituem as falas geradas anteriormente com Kokoro e os efeitos sintetizados da faixa principal. Os arquivos originais permanecem intactos; seus hashes foram conferidos após o processamento. A origem e a licença dos downloads não foram informadas, portanto não se atribui a esses arquivos a licença Apache do gerador anterior.
 
-O aplicativo distribui somente o áudio gerado, sem os pesos do modelo nem o sintetizador. Nenhum serviço remoto é consultado para anunciar fases ou exercícios; não há conta, envio de nomes de exercícios ou geração de voz online.
+## Arquivos preparados
 
-`lib/tabata/phase-voices.ts` contém PCM mono unsigned de 8 bits a 8 kHz, em base64, com decodificação em memória apenas quando a voz é utilizada. O renderer mistura o aviso correspondente no início de cada fase e inclui a conclusão no fim da faixa. Os bipes têm volume reduzido quando a voz está ligada. Pausa, retomada e salto usam os mesmos offsets do timer; avisos passados não são reproduzidos ao recuperar a execução.
+`assets/tabata-audio/` contém cópias em MP3 mono, 24 kHz, 64 kbps, totalizando 119.332 bytes em vez de 1.006.835 bytes (redução de 88,1%). `audio-report.json` registra os arquivos de origem, hashes, durações, cortes e ajustes de ganho.
 
-`public/timer/voice-test.wav` contém “Teste de som”. `public/timer/unlock.wav` é um arquivo de silêncio de 100 ms, reproduzido uma única vez no gesto de início para desbloquear o player quando os bipes estão desativados. Não existe loop de silêncio.
+As vozes receberam cortes conservadores de silêncio com margens de proteção, ajuste de volume e pequenas rampas nas bordas. O efeito ready passou de 1,250 s para 0,733 s; o de conclusão passou de 2,874 s para 1,925 s. O relógio foi preparado como um loop de 2,4 s. As cópias decodificadas não atingem o limite de amplitude; a prévia com todas as fases também não apresentou samples saturados.
 
-## Regenerar os arquivos
+A análise verifica formato, duração, silêncio e amplitude. Não equivale a uma avaliação auditiva do timbre nem de inteligibilidade em um iPhone físico.
 
-A geração é opcional e não integra o build ou o CI do site. Requer Python 3.12, espeak-ng, ffmpeg e ambiente virtual com `kokoro==0.9.4` e `soundfile`:
+## Reprodução no aplicativo
+
+Os MP3s são as fontes compactas para manutenção e prévia. `lib/tabata/phase-voices.ts` empacota PCM mono unsigned de 8 bits a 16 kHz para mistura síncrona da faixa de mídia, sem requisições ou decodificação assíncrona durante o início do treino. A taxa dobrou em relação à versão anterior para preservar mais detalhe nas vozes. A precisão de 8 bits mantém a faixa longa limitada em memória; o WAV temporário usa aproximadamente 0,96 MB/minuto e mantém o limite de duas horas restantes.
+
+A faixa contém o relógio durante todas as fases, as falas, o efeito de mudança de fase e o de conclusão. O relógio baixa de volume durante os avisos e para ao pausar ou terminar. O controle Bipes e relógio desativa o relógio e os efeitos, mantendo Voz independente. Retomar, saltar e recuperar regeneram a sequência restante usando a posição do relógio, sem repetir avisos antigos. A reprodução continua entregue ao mesmo player desbloqueado pelo toque, sem depender de callbacks de JavaScript em segundo plano.
+
+`public/timer/` mantém WAVs curtos para Testar alertas, desbloqueio e fallback. Os nomes e URLs existentes foram preservados e continuam no cache offline. Nenhum áudio é enviado a serviço externo durante a execução.
+
+## Preparar e empacotar
+
+Com Python 3 e ffmpeg, sem instalar bibliotecas Python:
 
 ```sh
-python scripts/generate-phase-voices.py
+python3 scripts/prepare-timer-audio.py --source /caminho/para/os/originais
 ```
 
-No macOS pode ser necessário apontar `PHONEMIZER_ESPEAK_LIBRARY` para a biblioteca do espeak-ng instalada pelo Homebrew. O script baixa o modelo no ambiente de geração e normaliza os clipes antes da conversão para PCM. O resultado empacotado é aproximadamente 90 KB de código com as oito frases.
+Cria `Timer-prontos` ao lado dos originais, copia os MP3s processados para `assets/tabata-audio/` e empacota o módulo/WAVs. A resolução de nomes aceita Unicode composto/decomposto dos arquivos do macOS. Para apenas reempacotar as fontes processadas do repositório:
 
-A regressão automatizada verifica conteúdo não silencioso e presença exata de cada clipe no WAV final, funcionamento apenas com voz, controles de bipes/voz independentes e recuperação sem avisos antigos. Isso não substitui escutar e validar o resultado em iPhone físico.
+```sh
+python3 scripts/pack-timer-audio.py
+```
+
+Nenhuma dessas etapas é executada no build do site; os resultados são versionados. O antigo gerador Kokoro foi removido para impedir sobrescrita acidental com a voz e a taxa antigas.
