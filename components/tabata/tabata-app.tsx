@@ -1286,7 +1286,6 @@ export function TabataApp() {
                         <h3>{preset.workout.name}</h3>
                         <p>
                           {preset.workout.sets} série(s) ·{" "}
-                          {preset.workout.repetitions} repetições ·{" "}
                           {formatTime(totalMs(preset.workout))}
                         </p>
                         <span className="tt-saved-details">
@@ -1295,7 +1294,10 @@ export function TabataApp() {
                             <span className="sr-only">Exercício: </span>
                             {preset.workout.exercise}s
                           </span>
-                          <span className="tt-detail-separator" aria-hidden="true">
+                          <span
+                            className="tt-detail-separator"
+                            aria-hidden="true"
+                          >
                             ·
                           </span>
                           <span title="Descanso">
@@ -1303,7 +1305,10 @@ export function TabataApp() {
                             <span className="sr-only">Descanso: </span>
                             {preset.workout.rest}s
                           </span>
-                          <span className="tt-detail-separator" aria-hidden="true">
+                          <span
+                            className="tt-detail-separator"
+                            aria-hidden="true"
+                          >
                             ·
                           </span>
                           <span title="Repetições">
