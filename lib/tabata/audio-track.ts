@@ -7,7 +7,7 @@ export interface TrackAudioOptions {
   sound?: boolean;
   voice?: boolean;
   voices?: Partial<Record<Phase["kind"] | "complete", Uint8Array>>;
-  effects?: Partial<Record<"clock" | "countdown" | "transition" | "complete", Uint8Array>>;
+  effects?: Partial<Record<"countdown" | "transition" | "complete", Uint8Array>>;
 }
 
 /** A real workout soundtrack: the media player handles future cues without JS timers. */
@@ -46,18 +46,6 @@ export function renderWorkoutTrack(
   text(36, "data");
   view.setUint32(40, samples, true);
   bytes.fill(128, 44);
-  const clock = options.sound !== false ? options.effects?.clock : undefined;
-  if (clock?.length) {
-    const finish = Math.round(remaining * TRACK_SAMPLE_RATE / 1000);
-    const from = Math.round(offset * TRACK_SAMPLE_RATE / 1000);
-    const fade = Math.round(TRACK_SAMPLE_RATE * .008);
-    for (let i = 0; i < finish; i++) {
-      const envelope = Math.min(1, i / fade, (finish - i - 1) / fade);
-      bytes[44 + i] = 128 + Math.round(
-        (clock[(from + i) % clock.length] - 128) * .18 * envelope,
-      );
-    }
-  }
   const speech = (
     absoluteMs: number,
     clip: Uint8Array | undefined,
@@ -72,9 +60,6 @@ export function renderWorkoutTrack(
     );
     for (let i = 0; i < count && start + i < samples; i++) {
       const source = clip[Math.min(clip.length - 1, Math.floor(i * clip.length / count))];
-      // The background clock is already present. Lower it under each voice clip.
-      if (clock?.length)
-        bytes[44 + start + i] = 128 + Math.round((bytes[44 + start + i] - 128) * .25);
       bytes[44 + start + i] = Math.max(
         0, Math.min(255, bytes[44 + start + i] + source - 128),
       );

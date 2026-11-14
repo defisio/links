@@ -25,7 +25,6 @@ SOURCES = {
     "cooldown": "Desaquecimento.mp3",
     "complete": "Treino concluído.mp3",
     "test": "Teste de som.mp3",
-    "clock": "ClockBackground.wav",
     "ready": "ready.m4a",
     "finish": "complete.m4a",
 }
@@ -69,10 +68,6 @@ def main():
         active = [i for i, value in enumerate(audio) if abs(value) >= threshold]
         start = max(0, active[0] - round(.06 * RATE))
         end = min(len(audio), active[-1] + round(.09 * RATE))
-        if key == "clock":
-            # Eight alternating ticks: retain the intended cadence at the seam.
-            start = max(0, active[0] - round(.03 * RATE))
-            end = min(len(audio), start + round(2.4 * RATE))
         audio = audio[start:end]
         frame = RATE // 100
         audible = [
@@ -81,7 +76,7 @@ def main():
             for value in audio[i:i + frame]
         ]
         rms = math.sqrt(sum(value * value for value in audible) / len(audible))
-        target = .12 if key not in {"clock", "ready", "finish"} else .16
+        target = .12 if key not in {"ready", "finish"} else .16
         gain = min(target / max(rms, 1e-6), .72 / peak)
         fade = round(.004 * RATE)
         for i in range(len(audio)):

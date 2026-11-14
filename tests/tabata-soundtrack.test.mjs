@@ -124,44 +124,18 @@ test("voice-only recovery skips past announcements and keeps the next phase at i
   assert.ok(hasTone(buffer, 13060, 1500));
 });
 
-test("continuous clock is embedded throughout phases and stops before the finish tail", () => {
-  const clock = new Uint8Array(TRACK_SAMPLE_RATE).fill(128);
-  clock.fill(200, 0, TRACK_SAMPLE_RATE / 5);
-  const { buffer } = renderWorkoutTrack(phases, 0, {sound: true, effects: {clock}});
-  assert.ok(hasTone(buffer, 8000), "Clock must keep playing between phase cues without JS");
-  assert.equal(hasTone(buffer, 21000), false, "Clock ends with the workout");
-});
-test("continuous clock is muted independently from voice and keeps its timeline position on resume", () => {
-  const clock = new Uint8Array(TRACK_SAMPLE_RATE).fill(128);
-  clock.fill(200, 0, TRACK_SAMPLE_RATE / 5);
-  const options = {sound:true, effects:{clock}};
-  const full = renderWorkoutTrack(phases, 0, options).buffer;
-  const resumed = renderWorkoutTrack(phases, 7050, options).buffer;
-  const start = Math.round(20 * TRACK_SAMPLE_RATE / 1000);
-  assert.deepEqual(new Uint8Array(resumed,44+start,400),new Uint8Array(full,44+Math.round(7070*TRACK_SAMPLE_RATE/1000),400));
-  const muted = renderWorkoutTrack(phases, 0, {...options,sound:false,voice:true}).buffer;
-  assert.equal(hasTone(muted,8000),false);
-});
-test("clock becomes quieter beneath a recorded phase announcement", () => {
-  const clock=new Uint8Array(TRACK_SAMPLE_RATE).fill(200);
-  const voice=new Uint8Array(TRACK_SAMPLE_RATE/2).fill(180);
-  const {buffer}=renderWorkoutTrack(phases,0,{sound:true,voice:true,voices:{preparation:voice},effects:{clock,transition:new Uint8Array(0)}});
-  const bytes=new Uint8Array(buffer,44);
-  const before=bytes[Math.round(.8*TRACK_SAMPLE_RATE)];
-  const during=bytes[Math.round(.1*TRACK_SAMPLE_RATE)]-(180-128);
-  assert.ok(during<before,"Do not mask the announcement with the clock");
-});
-
 test("packaged effects match offline previews and the media-track sample rate", () => {
   assert.equal(AUDIO_ASSET_SAMPLE_RATE, TRACK_SAMPLE_RATE);
   const effects = getWorkoutEffects();
-  assert.deepEqual(Object.keys(effects).sort(), ["clock","complete","countdown","transition"]);
+  assert.deepEqual(Object.keys(effects).sort(), ["complete","countdown","transition"]);
   for (const key of ["complete","countdown","transition"]) {
     const file=readFileSync(new URL(`../public/timer/${key}.wav`,import.meta.url));
     assert.equal(file.readUInt32LE(24),TRACK_SAMPLE_RATE);
     assert.deepEqual(new Uint8Array(file.subarray(44)),effects[key]);
   }
   const {buffer}=renderWorkoutTrack(phases,0,{sound:true,voice:true,voices:getPhaseVoices(),effects});
-  assert.ok(hasTone(buffer,8000,300),"The actual clock recording must play between announcements");
+  assert.equal(hasTone(buffer,8000,300),false,"Keep silence between scheduled announcements and alerts");
+  const resumed=renderWorkoutTrack(phases,7000,{sound:true,voice:true,voices:getPhaseVoices(),effects}).buffer;
+  assert.equal(hasTone(resumed,0,500),false,"Resuming must not introduce a continuous clock");
   assert.equal(new Uint8Array(buffer,44).some(value=>value===0||value===255),false,"Keep headroom when all recorded clips are mixed");
 });

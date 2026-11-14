@@ -17,3 +17,5 @@ Referências: [WebKit: modo silencioso e playback](https://bugs.webkit.org/show_
 ## Gravações fornecidas pelo usuário e relógio contínuo
 
 O usuário forneceu oito falas e três efeitos e confirmou que o relógio deve tocar durante todo o treino. As fontes foram padronizadas em MP3 e empacotadas em PCM para manter o início síncrono da faixa e o desbloqueio já validado em iPhone. A taxa de mistura foi elevada a 16 kHz. O relógio é misturado uma única vez em todas as fases, fica mais baixo sob as vozes e encerra no fim do treino; não usa loops de mídia separados nem temporizadores de segundo plano. Os detalhes de processamento e reprodução estão em [áudios do timer](../phase-voice-assets.md).
+
+O usuário posteriormente pediu remover ClockBackground após testar o resultado. O loop e seu arquivo foram retirados, com silêncio entre os eventos programados. A contagem 3–2–1 passou a usar um bipe independente. Mantêm-se a faixa de mídia, as vozes fornecidas, os demais efeitos e a taxa de 16 kHz.

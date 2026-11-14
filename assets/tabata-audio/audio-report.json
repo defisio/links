@@ -122,21 +122,6 @@
       "processed_sha256": "248fb146e78ebea7f3cdb6a8eeb0448570f58479e0ad4dba1a4642829c985447"
     },
     {
-      "key": "clock",
-      "original": "ClockBackground.wav",
-      "file": "clock.mp3",
-      "original_bytes": 656552,
-      "processed_bytes": 19820,
-      "original_seconds": 2.481,
-      "processed_seconds": 2.4,
-      "trim_start_seconds": 0.07,
-      "trim_end_seconds": 0.011,
-      "gain_db": -3.83,
-      "peak_db": -3.09,
-      "original_sha256": "21bdfb14bfd78b4308a5331ebaac998a86455442206738fae28d85ac1d1f07fd",
-      "processed_sha256": "cc49dc6e189f8ee5fe87d5ae9426655f652ebb84b9c34e403e9ee9b382e636f0"
-    },
-    {
       "key": "ready",
       "original": "ready.m4a",
       "file": "ready.mp3",

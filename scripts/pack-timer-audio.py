@@ -5,6 +5,7 @@ Does not run during site builds; generated sources/assets are committed.
 from pathlib import Path
 import base64
 import json
+import math
 import subprocess
 import wave
 
@@ -37,10 +38,13 @@ def wav(name, pcm):
 def main():
     voices = {key: decode(key) for key in PHRASES}
     effects = {key: decode(name) for key, name in {
-        "clock": "clock", "transition": "ready", "complete": "finish",
+        "transition": "ready", "complete": "finish",
     }.items()}
-    # A single clean tick from the continuous clock for the 3-2-1 accents.
-    effects["countdown"] = effects["clock"][:round(.2 * RATE)]
+    # Short electronic countdown beep, independent of the removed clock asset.
+    count = round(.13 * RATE)
+    effects["countdown"] = bytes(round(128 + math.sin(2 * math.pi * 650 * i / RATE)
+        * min(1, i / (RATE * .012)) * max(0, 1 - i / count) * 45)
+        for i in range(count))
     wav("voice-test", voices["test"])
     wav("unlock", bytes([128]) * (RATE // 10))
     wav("ready", effects["transition"])
@@ -52,7 +56,7 @@ def main():
 export const PHASE_VOICE_TEXT = ''' + json.dumps(PHRASES, ensure_ascii=False, indent=2) + ''' as const;
 export const AUDIO_ASSET_SAMPLE_RATE = 16000;
 export type PhaseVoiceKey = keyof typeof PHASE_VOICE_TEXT;
-export type WorkoutEffectKey = "clock" | "countdown" | "transition" | "complete";
+export type WorkoutEffectKey = "countdown" | "transition" | "complete";
 const encoded = ''' + json.dumps(encoded(voices), indent=2) + ''';
 const encodedEffects = ''' + json.dumps(encoded(effects), indent=2) + ''';
 function decode<T extends string>(clips: Record<T, string>): Record<T, Uint8Array> {

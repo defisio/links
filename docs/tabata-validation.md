@@ -23,7 +23,7 @@ Abrir o mesmo endereço. O servidor de preview e o desenvolvimento usam `/links`
 
 ## Verificações realizadas
 
-- `npm run test:tabata`: **49 testes passaram**. Cobrem sequência, descanso final e entre séries, fases zero, nomes, passagem real do tempo, pausas, saltos, conclusão, interrupção, independência de configurações, retenção de favoritas, validação de armazenamento, geração de IDs sem `randomUUID`, preferências iniciais e deduplicação de alertas entre emissores. Incluem testes do worker, da política de áudio do iPhone e da faixa completa de bipes e avisos falados, além dos controles reais da interface em DOM simulado.
+- `npm run test:tabata`: **46 testes passaram**. Cobrem sequência, descanso final e entre séries, fases zero, nomes, passagem real do tempo, pausas, saltos, conclusão, interrupção, independência de configurações, retenção de favoritas, validação de armazenamento, geração de IDs sem `randomUUID`, preferências iniciais e deduplicação de alertas entre emissores. Incluem testes do worker, da política de áudio do iPhone e da faixa completa de bipes e avisos falados, além dos controles reais da interface em DOM simulado.
 - `npm run typecheck`: passou.
 - `npm run build`: passou, incluindo a verificação de tipos e a exportação estática das rotas. Foi removida a configuração anterior que ignorava erros de TypeScript.
 - `npm run check:tabata-export`: passou. O worker foi exercitado com o HTML e os arquivos reais da exportação em um ambiente simulado, verificando **25 recursos** offline, incluindo scripts, estilos, fontes, ícones e arquivos de áudio. Também verifica manifesto, cache específico do build, acesso ao timer pela home e canonical único da rota.
@@ -95,3 +95,7 @@ A linha dos modelos agora mostra preparação, exercício, descanso e repetiçõ
 Os onze arquivos foram padronizados em MP3 mono, 24 kHz, 64 kbps, com cortes de pausas, ajuste de volume, verificação de amplitude e preservação dos originais. Total de 119.332 bytes nas cópias, 88,1% menor. A pedido do usuário, o relógio foi incorporado a todas as fases da faixa de mídia e é reduzido durante as falas. A mistura passou a 16 kHz para preservar mais detalhe.
 
 Os 49 testes e a checagem de tipos passaram. Os novos casos conferem relógio entre os avisos, fim do relógio antes da cauda de conclusão, alinhamento do loop ao retomar, controle de som independente e redução do relógio sob a voz. A prévia de 28 segundos usa o renderer real e não contém samples saturados. A conferência por ffprobe confirmou o mesmo codec, taxa, canais e bitrate nos onze MP3s; os hashes confirmaram os originais intactos. A revisão auditiva no iPhone permanece necessária.
+
+## Remoção do relógio de fundo
+
+Após ouvir o resultado, o usuário pediu retirar ClockBackground. Removidos o loop contínuo, a redução de volume associada, o arquivo do relógio no repositório e sua dependência no empacotamento. A contagem 3–2–1 usa um bipe curto independente; permanecem as vozes e os efeitos de troca de fase/conclusão. As preferências voltaram a mostrar Bipes. Os 46 testes passaram, incluindo silêncio entre eventos na faixa real e após retomada; os três testes exclusivos do relógio contínuo foram retirados com a funcionalidade.

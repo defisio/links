@@ -1444,7 +1444,7 @@ export function TabataApp() {
           </button>
         </footer>
         <p className="tt-background-note">
-          Relógio, bipes e avisos de fase em segundo plano após iniciar o treino.
+          Bipes e avisos de fase em segundo plano após iniciar o treino.
         </p>
       </div>
       {preferencesOpen && (
@@ -1462,8 +1462,8 @@ export function TabataApp() {
           <Toggle
             checked={data.preferences.sound}
             onChange={() => preference("sound")}
-            title="Bipes e relógio"
-            description="Relógio contínuo, contagem 3–2–1 e mudanças de fase"
+            title="Bipes"
+            description="Contagem 3–2–1 e mudanças de fase"
             icon={<Volume2 size={18} />}
           />
           <Toggle
