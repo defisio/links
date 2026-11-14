@@ -1289,6 +1289,17 @@ export function TabataApp() {
                           {formatTime(totalMs(preset.workout))}
                         </p>
                         <span className="tt-saved-details">
+                          <span title="Preparação">
+                            <Timer size={13} aria-hidden="true" />
+                            <span className="sr-only">Preparação: </span>
+                            {preset.workout.preparation}s
+                          </span>
+                          <span
+                            className="tt-detail-separator"
+                            aria-hidden="true"
+                          >
+                            ·
+                          </span>
                           <span title="Exercício">
                             <Flame size={13} aria-hidden="true" />
                             <span className="sr-only">Exercício: </span>
