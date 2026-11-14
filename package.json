@@ -5,7 +5,7 @@
   "packageManager": "yarn@3.6.4",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/prepare-tabata-worker.mjs",
+    "build": "next build --webpack && node scripts/prepare-tabata-worker.mjs",
     "start": "node scripts/serve-export.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
