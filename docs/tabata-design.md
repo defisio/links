@@ -2,6 +2,15 @@
 
 Status: entendimento confirmado pelo usuário na Q17 e implementação concluída no checkout. A validação automatizada e as limitações de verificação estão registradas em [tabata-validation.md](tabata-validation.md).
 
+## Ajustes de interface confirmados em 14/11/2026
+
+Esta revisão substitui os requisitos anteriores referentes à área de histórico e à apresentação do cabeçalho e da biblioteca:
+
+- Remover a aba de histórico e suas ações da interface. As execuções continuam sustentando a recuperação e o relógio internamente, sem migração ou exclusão dos modelos salvos.
+- Em Meus treinos, remover o bloco “Sempre à mão” e seu atalho para o clássico; a biblioteca apresenta os modelos do usuário diretamente.
+- Abaixo do resumo de séries, repetições e duração planejada, mostrar os valores configurados de exercício, descanso e repetições acompanhados dos ícones correspondentes. Manter descrições para leitores de tela e permitir quebra de linha em telas estreitas.
+- Retirar o nome e a marca do cabeçalho do timer. Manter apenas voltar e preferências, com alvos de toque de 44 px em uma faixa de 56 px (48 px em paisagem). Em paisagem, os controles de visualização ficam centralizados entre os dois botões.
+
 ## Requisitos estabelecidos pelo usuário
 
 - Adicionar uma rota ao site de links existente.

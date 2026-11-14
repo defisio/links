@@ -13,7 +13,6 @@ import {
   Dumbbell,
   Flame,
   Heart,
-  History,
   ListMusic,
   LoaderCircle,
   Maximize2,
@@ -24,6 +23,7 @@ import {
   Play,
   Plus,
   RotateCcw,
+  Repeat2,
   Save,
   Settings2,
   ShieldCheck,
@@ -40,7 +40,6 @@ import {
 } from "lucide-react";
 import {
   begin,
-  CLASSIC,
   formatTime,
   interrupt,
   pause,
@@ -60,7 +59,7 @@ import { assetPath } from "@/lib/utils";
 import { useTabata } from "./use-tabata";
 import "./tabata.css";
 
-type Tab = "configuration" | "saved" | "history";
+type Tab = "configuration" | "saved";
 type Dialog = {
   title: string;
   description?: string;
@@ -304,9 +303,6 @@ export function TabataApp() {
   const [install, setInstall] = useState<InstallEvent | null>(null);
   const [offlineReady, setOfflineReady] = useState(false);
   const [online, setOnline] = useState(true);
-  const [historyFilter, setHistoryFilter] = useState<"all" | "favorites">(
-    "all",
-  );
   const alerts = useRef<WorkoutAlerts | null>(null);
   const audioControls = useRef<{ pause: () => void; resume: () => void }>({
     pause() {},
@@ -609,7 +605,7 @@ export function TabataApp() {
     setDialog({
       title: "Encerrar este treino?",
       description:
-        "Esta execução ficará no histórico como interrompida. Você pode repetir o treino quando quiser.",
+        "O cronômetro será encerrado. Seus modelos de treino continuam salvos.",
       confirm: "Encerrar treino",
       action: () => {
         alerts.current?.deactivate();
@@ -704,29 +700,6 @@ export function TabataApp() {
         );
       },
     });
-  const renameExecution = (execution: Execution) =>
-    setDialog({
-      title: "Renomear execução",
-      initial: execution.name,
-      confirm: "Renomear",
-      action: (name) => {
-        void updateExecution(execution.id, (e) => ({ ...e, name }));
-      },
-    });
-  const deleteExecution = (execution: Execution) =>
-    setDialog({
-      title: "Excluir esta execução?",
-      description:
-        "Somente este registro sairá do histórico. Seus modelos continuam salvos.",
-      confirm: "Excluir execução",
-      action: () => {
-        void mutate((latest) => ({
-          ...latest,
-          executions: latest.executions.filter((e) => e.id !== execution.id),
-        }));
-        if (completedId === execution.id) setCompletedId(null);
-      },
-    });
   const fullscreen = async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
@@ -746,16 +719,6 @@ export function TabataApp() {
     if (!active || active.status === "paused")
       alerts.current?.deactivateAfter(4000);
   };
-  const history = data.executions.filter(
-    (e) =>
-      e.status !== "running" &&
-      e.status !== "paused" &&
-      (historyFilter === "all" || e.favorite),
-  );
-  const completedCount = data.executions.filter(
-    (e) => e.status === "completed",
-  ).length;
-
   return (
     <main
       className={`tt-app ${data.preferences.contrast ? "tt-contrast" : ""}`}
@@ -765,30 +728,20 @@ export function TabataApp() {
         <header className="tt-header">
           <Link
             href="/"
-            className="tt-brand"
-            aria-label="Voltar aos links de Débora Eduarda"
+            className="tt-icon-button"
+            aria-label="Voltar aos links"
+            title="Voltar aos links"
           >
-            <span className="tt-brand-mark">
-              de<span>✦</span>
-            </span>
-            <span className="tt-brand-name">
-              DÉBORA EDUARDA<small>FISIOTERAPIA & MOVIMENTO</small>
-            </span>
+            <ArrowLeft size={20} />
           </Link>
-          <div className="tt-header-actions">
-            <Link href="/" className="tt-back">
-              <ArrowLeft size={15} />
-              <span>Voltar aos links</span>
-            </Link>
-            <span className="tt-header-divider" />
-            <button
-              className="tt-icon-button"
-              aria-label="Preferências"
-              onClick={() => setPreferencesOpen(true)}
-            >
-              <Settings2 size={20} />
-            </button>
-          </div>
+          <button
+            className="tt-icon-button"
+            aria-label="Preferências"
+            title="Preferências"
+            onClick={() => setPreferencesOpen(true)}
+          >
+            <Settings2 size={20} />
+          </button>
         </header>
         {/* <div className="tt-intro">
           <div>
@@ -1090,11 +1043,6 @@ export function TabataApp() {
                     label: "Meus treinos",
                     icon: <Dumbbell size={16} />,
                   },
-                  {
-                    id: "history",
-                    label: "Histórico",
-                    icon: <History size={16} />,
-                  },
                 ] as const
               ).map((item) => (
                 <button
@@ -1310,28 +1258,9 @@ export function TabataApp() {
               <div className="tt-tab-content">
                 <div className="tt-section-heading">
                   <div>
-                    <span className="tt-eyebrow">SEMPRE À MÃO</span>
                     <h2>Seus treinos</h2>
                   </div>
-                  <Dumbbell className="tt-muted" size={22} />
-                </div>
-                <button
-                  className="tt-preset-card tt-classic"
-                  onClick={() => loadWorkout(CLASSIC)}
-                >
-                  <span className="tt-preset-icon">
-                    <Flame size={23} />
-                  </span>
-                  <span>
-                    <small>O ORIGINAL</small>
-                    <strong>Tabata clássico</strong>
-                    <span>20s exercício · 10s descanso · 8 repetições</span>
-                  </span>
-                  <ArrowRight size={19} />
-                </button>
-                <div className="tt-list-heading">
-                  <span>MODELOS PERSONALIZADOS</span>
-                  <small>{data.presets.length}</small>
+                  <span className="tt-count-pill">{data.presets.length}</span>
                 </div>
                 {!data.presets.length && (
                   <div className="tt-empty">
@@ -1360,6 +1289,29 @@ export function TabataApp() {
                           {preset.workout.repetitions} repetições ·{" "}
                           {formatTime(totalMs(preset.workout))}
                         </p>
+                        <span className="tt-saved-details">
+                          <span title="Exercício">
+                            <Flame size={13} aria-hidden="true" />
+                            <span className="sr-only">Exercício: </span>
+                            {preset.workout.exercise}s
+                          </span>
+                          <span className="tt-detail-separator" aria-hidden="true">
+                            ·
+                          </span>
+                          <span title="Descanso">
+                            <Heart size={13} aria-hidden="true" />
+                            <span className="sr-only">Descanso: </span>
+                            {preset.workout.rest}s
+                          </span>
+                          <span className="tt-detail-separator" aria-hidden="true">
+                            ·
+                          </span>
+                          <span title="Repetições">
+                            <Repeat2 size={13} aria-hidden="true" />
+                            <span className="sr-only">Repetições: </span>
+                            {preset.workout.repetitions}
+                          </span>
+                        </span>
                       </div>
                     </div>
                     <div className="tt-item-actions">
@@ -1406,7 +1358,7 @@ export function TabataApp() {
                           setDialog({
                             title: "Excluir este modelo?",
                             description:
-                              "As execuções do histórico continuam salvas.",
+                              "Este treino será removido dos seus modelos salvos.",
                             confirm: "Excluir modelo",
                             action: () => {
                               void mutate((latest) => ({
@@ -1424,126 +1376,6 @@ export function TabataApp() {
                     </div>
                   </article>
                 ))}
-              </div>
-            )}
-            {tab === "history" && (
-              <div className="tt-tab-content">
-                <div className="tt-section-heading">
-                  <div>
-                    <span className="tt-eyebrow">CADA TREINO CONTA</span>
-                    <h2>Seu histórico</h2>
-                  </div>
-                  <span className="tt-count-pill">
-                    {completedCount} concluído(s)
-                  </span>
-                </div>
-                <div className="tt-filter">
-                  <button
-                    className={historyFilter === "all" ? "selected" : ""}
-                    onClick={() => setHistoryFilter("all")}
-                  >
-                    Recentes
-                  </button>
-                  <button
-                    className={historyFilter === "favorites" ? "selected" : ""}
-                    onClick={() => setHistoryFilter("favorites")}
-                  >
-                    <Heart size={14} />
-                    Favoritas
-                  </button>
-                </div>
-                {!history.length && (
-                  <div className="tt-empty">
-                    <History size={30} />
-                    <h3>
-                      {historyFilter === "favorites"
-                        ? "Suas favoritas ficam aqui."
-                        : "Todo movimento tem um começo."}
-                    </h3>
-                    <p>
-                      {historyFilter === "favorites"
-                        ? "Toque no coração de uma execução para guardá-la."
-                        : "Inicie seu primeiro treino. A gente cuida de registrar."}
-                    </p>
-                  </div>
-                )}
-                {history.map((execution) => (
-                  <article key={execution.id} className="tt-history-item">
-                    <div className="tt-history-date">
-                      {new Intl.DateTimeFormat("pt-BR", {
-                        day: "2-digit",
-                        month: "short",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }).format(execution.startedAt)}
-                      <span
-                        className={
-                          execution.status === "completed"
-                            ? "tt-status complete"
-                            : "tt-status"
-                        }
-                      >
-                        {execution.status === "completed"
-                          ? "Concluído"
-                          : "Interrompido"}
-                      </span>
-                    </div>
-                    <div className="tt-saved-top">
-                      <div>
-                        <h3>{execution.name}</h3>
-                        <p>
-                          {execution.workout.sets} série(s) ×{" "}
-                          {execution.workout.repetitions} repetições ·{" "}
-                          {formatTime(totalMs(execution.workout))}
-                        </p>
-                        {execution.skippedPhases > 0 && (
-                          <small>
-                            {execution.skippedPhases} fase(s) pulada(s)
-                          </small>
-                        )}
-                      </div>
-                      <button
-                        className={`tt-icon-button tt-favorite ${execution.favorite ? "selected" : ""}`}
-                        aria-label={
-                          execution.favorite
-                            ? `Desfavoritar ${execution.name}`
-                            : `Favoritar ${execution.name}`
-                        }
-                        aria-pressed={execution.favorite}
-                        onClick={() =>
-                          void updateExecution(execution.id, (e) => ({
-                            ...e,
-                            favorite: !e.favorite,
-                          }))
-                        }
-                      >
-                        <Heart
-                          size={19}
-                          fill={execution.favorite ? "currentColor" : "none"}
-                        />
-                      </button>
-                    </div>
-                    <div className="tt-item-actions">
-                      <button onClick={() => loadWorkout(execution.workout)}>
-                        <RotateCcw size={14} />
-                        Repetir
-                      </button>
-                      <button onClick={() => renameExecution(execution)}>
-                        <Pencil size={14} />
-                        Renomear
-                      </button>
-                      <button
-                        aria-label={`Excluir execução ${execution.name}`}
-                        onClick={() => deleteExecution(execution)}
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  </article>
-                ))}
-                <p className="tt-history-note">
-                  100 execuções recentes. Suas favoritas ficam preservadas.
-                </p>
               </div>
             )}
           </aside>
