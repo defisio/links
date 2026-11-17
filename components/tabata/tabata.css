@@ -44,6 +44,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding: 18px 0px;
 }
 .tt-header > .tt-icon-button {
   min-width: 44px;

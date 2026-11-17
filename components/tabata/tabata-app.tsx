@@ -54,10 +54,19 @@ import {
   type Execution,
   type Workout,
 } from "@/lib/tabata/engine";
-import { validWorkout, type Preferences, type WorkoutFolder } from "@/lib/tabata/storage";
 import {
-  addFolder, deleteFolder, folderNameError, movePreset,
-  renameFolder, reorderFolder, reorderPreset,
+  validWorkout,
+  type Preferences,
+  type WorkoutFolder,
+} from "@/lib/tabata/storage";
+import {
+  addFolder,
+  deleteFolder,
+  folderNameError,
+  movePreset,
+  renameFolder,
+  reorderFolder,
+  reorderPreset,
 } from "@/lib/tabata/library";
 import { createId } from "@/lib/tabata/id";
 import { WorkoutAlerts } from "@/lib/tabata/alerts";
@@ -112,18 +121,24 @@ function NumberField({
 }) {
   const [editing, setEditing] = useState<string | null>(null);
   const pending = useRef<{ base: number; next: number } | null>(null);
-  useEffect(() => { pending.current = null; }, [value]);
+  useEffect(() => {
+    pending.current = null;
+  }, [value]);
   const clamp = (next: number) => Math.min(max, Math.max(min, next));
-  const parse = (text: string) => duration ? parseDurationInput(text) : Number(text);
+  const parse = (text: string) =>
+    duration ? parseDurationInput(text) : Number(text);
   const commit = (next: number) => {
     const bounded = clamp(next);
     pending.current = { base: value, next: bounded };
     onChange(bounded);
   };
   const parsed = editing !== null ? parse(editing) : null;
-  const current = parsed !== null && Number.isFinite(parsed)
-    ? clamp(Math.round(parsed))
-    : pending.current?.base === value ? pending.current.next : value;
+  const current =
+    parsed !== null && Number.isFinite(parsed)
+      ? clamp(Math.round(parsed))
+      : pending.current?.base === value
+        ? pending.current.next
+        : value;
   return (
     <label className="tt-number-field">
       <span className="tt-field-title">
@@ -148,15 +163,22 @@ function NumberField({
           type={duration ? "text" : "number"}
           min={duration ? undefined : min}
           max={duration ? undefined : max}
-          title={duration ? "Minutos e segundos (mm:ss). Também aceita segundos." : undefined}
+          title={
+            duration
+              ? "Minutos e segundos (mm:ss). Também aceita segundos."
+              : undefined
+          }
           value={editing ?? (duration ? formatDurationInput(value) : value)}
-          onFocus={() => setEditing(duration ? formatDurationInput(value) : String(value))}
+          onFocus={() =>
+            setEditing(duration ? formatDurationInput(value) : String(value))
+          }
           onChange={(event) => {
             setEditing(event.target.value);
             const next = parse(event.target.value);
             if (
               event.target.value !== "" &&
-              next !== null && Number.isInteger(next) &&
+              next !== null &&
+              Number.isInteger(next) &&
               next >= min &&
               next <= max
             )
@@ -165,7 +187,8 @@ function NumberField({
           onBlur={() => {
             if (editing !== null) {
               const next = parse(editing);
-              if (next !== null && Number.isFinite(next)) commit(Math.round(next));
+              if (next !== null && Number.isFinite(next))
+                commit(Math.round(next));
             }
             setEditing(null);
           }}
@@ -277,10 +300,15 @@ function ConfirmDialog({
         {dialog.folders && (
           <label className="tt-text-field">
             Pasta
-            <select value={folderId} onChange={(event) => setFolderId(event.target.value)}>
+            <select
+              value={folderId}
+              onChange={(event) => setFolderId(event.target.value)}
+            >
               <option value="">Sem pasta</option>
               {dialog.folders.map((folder) => (
-                <option key={folder.id} value={folder.id}>{folder.name}</option>
+                <option key={folder.id} value={folder.id}>
+                  {folder.name}
+                </option>
               ))}
             </select>
           </label>
@@ -345,7 +373,9 @@ export function TabataApp() {
   const [tab, setTab] = useState<Tab>("configuration");
   const [editingPresetId, setEditingPresetId] = useState<string | null>(null);
   const [saveFolderId, setSaveFolderId] = useState<string | null>(null);
-  const [collapsedFolders, setCollapsedFolders] = useState<Record<string, boolean>>({});
+  const [collapsedFolders, setCollapsedFolders] = useState<
+    Record<string, boolean>
+  >({});
   const [mobilePanel, setMobilePanel] = useState<"timer" | "details">("timer");
   const [advanced, setAdvanced] = useState(false);
   const [exerciseNames, setExerciseNames] = useState(false);
@@ -579,7 +609,9 @@ export function TabataApp() {
   };
   const loadWorkout = (workout: Workout, presetId: string | null = null) => {
     setEditingPresetId(presetId);
-    setSaveFolderId(data.presets.find((preset) => preset.id === presetId)?.folderId ?? null);
+    setSaveFolderId(
+      data.presets.find((preset) => preset.id === presetId)?.folderId ?? null,
+    );
     updateDraft({ ...workout, exercises: [...workout.exercises] });
     setTab("configuration");
     setMobilePanel("details");
@@ -716,7 +748,8 @@ export function TabataApp() {
       initial: draft.name,
       folders: data.folders.length ? data.folders : undefined,
       folderId: editingPresetId
-        ? data.presets.find((preset) => preset.id === editingPresetId)?.folderId ?? null
+        ? (data.presets.find((preset) => preset.id === editingPresetId)
+            ?.folderId ?? null)
         : saveFolderId,
       confirm: editingPresetId ? "Atualizar modelo" : "Salvar modelo",
       action: (name, selectedFolderId) => {
@@ -726,19 +759,41 @@ export function TabataApp() {
         }
         const id = createId();
         void mutate((latest) => {
-          const folderId = latest.folders.find((folder) => folder.id === selectedFolderId)?.id ?? null;
+          const folderId =
+            latest.folders.find((folder) => folder.id === selectedFolderId)
+              ?.id ?? null;
           const next = {
             ...latest,
             draft: { ...draft, name },
             presets: editingPresetId
-              ? latest.presets.map((preset) => preset.id === editingPresetId
-                ? { ...preset, workout: { ...draft, name, exercises: [...draft.exercises] } }
-                : preset)
-              : [...latest.presets, {
-                id, folderId, workout: { ...draft, name, exercises: [...draft.exercises] },
-              }],
+              ? latest.presets.map((preset) =>
+                  preset.id === editingPresetId
+                    ? {
+                        ...preset,
+                        workout: {
+                          ...draft,
+                          name,
+                          exercises: [...draft.exercises],
+                        },
+                      }
+                    : preset,
+                )
+              : [
+                  ...latest.presets,
+                  {
+                    id,
+                    folderId,
+                    workout: {
+                      ...draft,
+                      name,
+                      exercises: [...draft.exercises],
+                    },
+                  },
+                ],
           };
-          return editingPresetId ? movePreset(next, editingPresetId, folderId) : next;
+          return editingPresetId
+            ? movePreset(next, editingPresetId, folderId)
+            : next;
         });
         setSaveFolderId(selectedFolderId ?? null);
         setEditingPresetId(null);
@@ -749,30 +804,41 @@ export function TabataApp() {
         );
       },
     });
-  const editFolder = (folder?: WorkoutFolder) => setDialog({
-    title: folder ? "Renomear pasta" : "Nova pasta",
-    initial: folder?.name ?? "",
-    confirm: folder ? "Renomear" : "Criar pasta",
-    action: (name) => {
-      const error = folderNameError(data, name, folder?.id);
-      if (error) { setNotice(error); return; }
-      const id = folder?.id ?? createId();
-      void mutate((latest) => {
-        const error = folderNameError(latest, name, folder?.id);
-        if (error) { setNotice(error); return latest; }
-        return folder ? renameFolder(latest, id, name) : addFolder(latest, { id, name });
-      });
-    },
-  });
-  const removeFolder = (folder: WorkoutFolder) => setDialog({
-    title: `Excluir a pasta “${folder.name}”?`,
-    description: "Os treinos serão movidos para Sem pasta e continuarão salvos.",
-    confirm: "Excluir pasta",
-    action: () => {
-      void mutate((latest) => deleteFolder(latest, folder.id));
-      setSaveFolderId((current) => current === folder.id ? null : current);
-    },
-  });
+  const editFolder = (folder?: WorkoutFolder) =>
+    setDialog({
+      title: folder ? "Renomear pasta" : "Nova pasta",
+      initial: folder?.name ?? "",
+      confirm: folder ? "Renomear" : "Criar pasta",
+      action: (name) => {
+        const error = folderNameError(data, name, folder?.id);
+        if (error) {
+          setNotice(error);
+          return;
+        }
+        const id = folder?.id ?? createId();
+        void mutate((latest) => {
+          const error = folderNameError(latest, name, folder?.id);
+          if (error) {
+            setNotice(error);
+            return latest;
+          }
+          return folder
+            ? renameFolder(latest, id, name)
+            : addFolder(latest, { id, name });
+        });
+      },
+    });
+  const removeFolder = (folder: WorkoutFolder) =>
+    setDialog({
+      title: `Excluir a pasta “${folder.name}”?`,
+      description:
+        "Os treinos serão movidos para Sem pasta e continuarão salvos.",
+      confirm: "Excluir pasta",
+      action: () => {
+        void mutate((latest) => deleteFolder(latest, folder.id));
+        setSaveFolderId((current) => (current === folder.id ? null : current));
+      },
+    });
   const newWorkoutInFolder = (folderId: string | null) => {
     setEditingPresetId(null);
     setSaveFolderId(folderId);
@@ -797,8 +863,11 @@ export function TabataApp() {
     if (!active || active.status === "paused")
       alerts.current?.deactivateAfter(4000);
   };
-  const libraryGroups = [...data.folders, null].filter((folder) =>
-    folder !== null || data.presets.some((preset) => preset.folderId === null));
+  const libraryGroups = [...data.folders, null].filter(
+    (folder) =>
+      folder !== null ||
+      data.presets.some((preset) => preset.folderId === null),
+  );
   return (
     <main
       className={`tt-app ${data.preferences.contrast ? "tt-contrast" : ""}`}
@@ -853,7 +922,7 @@ export function TabataApp() {
           </div>
         )}
 
-        <div className={`tt-workspace tt-show-${mobilePanel} mt-1`}>
+        <div className={`tt-workspace tt-show-${mobilePanel}`}>
           <section
             ref={timerPanel}
             className={`tt-timer-panel tt-phase-${phaseKind} ${active ? "tt-executing" : ""} ${isFinished ? "tt-complete" : ""}`}
@@ -1350,7 +1419,10 @@ export function TabataApp() {
                   </div>
                   <div className="tt-library-heading-actions">
                     <span className="tt-count-pill">{data.presets.length}</span>
-                    <button className="tt-button secondary tt-new-folder" onClick={() => editFolder()}>
+                    <button
+                      className="tt-button secondary tt-new-folder"
+                      onClick={() => editFolder()}
+                    >
                       <FolderPlus size={16} /> Nova pasta
                     </button>
                   </div>
@@ -1372,39 +1444,78 @@ export function TabataApp() {
                 {libraryGroups.map((folder, folderIndex) => {
                   const folderId = folder?.id ?? null;
                   const folderKey = folder ? `folder-${folder.id}` : "unfiled";
-                  const items = data.presets.filter((preset) => preset.folderId === folderId);
+                  const items = data.presets.filter(
+                    (preset) => preset.folderId === folderId,
+                  );
                   const collapsed = !!collapsedFolders[folderKey];
                   return (
-                    <section className="tt-library-group" key={folderKey} data-folder-id={folderId ?? ""}>
+                    <section
+                      className="tt-library-group"
+                      key={folderKey}
+                      data-folder-id={folderId ?? ""}
+                    >
                       {data.folders.length > 0 && (
                         <div className="tt-folder-heading">
                           <button
                             className="tt-folder-toggle"
                             aria-expanded={!collapsed}
                             aria-controls={`tt-folder-${folderKey}`}
-                            onClick={() => setCollapsedFolders((previous) => ({...previous, [folderKey]: !collapsed}))}
+                            onClick={() =>
+                              setCollapsedFolders((previous) => ({
+                                ...previous,
+                                [folderKey]: !collapsed,
+                              }))
+                            }
                           >
                             <Folder size={18} />
                             <span>{folder?.name ?? "Sem pasta"}</span>
                             <small>{items.length}</small>
-                            {collapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+                            {collapsed ? (
+                              <ChevronDown size={16} />
+                            ) : (
+                              <ChevronUp size={16} />
+                            )}
                           </button>
                           {folder && (
                             <div className="tt-folder-actions">
-                              <button className="tt-icon-button" aria-label={`Subir pasta ${folder.name}`}
+                              <button
+                                className="tt-icon-button"
+                                aria-label={`Subir pasta ${folder.name}`}
                                 disabled={folderIndex === 0}
-                                onClick={() => { void mutate((latest) => reorderFolder(latest, folder.id, -1)); }}>
+                                onClick={() => {
+                                  void mutate((latest) =>
+                                    reorderFolder(latest, folder.id, -1),
+                                  );
+                                }}
+                              >
                                 <ChevronUp size={16} />
                               </button>
-                              <button className="tt-icon-button" aria-label={`Descer pasta ${folder.name}`}
-                                disabled={folderIndex === data.folders.length - 1}
-                                onClick={() => { void mutate((latest) => reorderFolder(latest, folder.id, 1)); }}>
+                              <button
+                                className="tt-icon-button"
+                                aria-label={`Descer pasta ${folder.name}`}
+                                disabled={
+                                  folderIndex === data.folders.length - 1
+                                }
+                                onClick={() => {
+                                  void mutate((latest) =>
+                                    reorderFolder(latest, folder.id, 1),
+                                  );
+                                }}
+                              >
                                 <ChevronDown size={16} />
                               </button>
-                              <button className="tt-icon-button" aria-label={`Renomear pasta ${folder.name}`} onClick={() => editFolder(folder)}>
+                              <button
+                                className="tt-icon-button"
+                                aria-label={`Renomear pasta ${folder.name}`}
+                                onClick={() => editFolder(folder)}
+                              >
                                 <Pencil size={15} />
                               </button>
-                              <button className="tt-icon-button" aria-label={`Excluir pasta ${folder.name}`} onClick={() => removeFolder(folder)}>
+                              <button
+                                className="tt-icon-button"
+                                aria-label={`Excluir pasta ${folder.name}`}
+                                onClick={() => removeFolder(folder)}
+                              >
                                 <Trash2 size={15} />
                               </button>
                             </div>
@@ -1413,12 +1524,22 @@ export function TabataApp() {
                       )}
                       <div id={`tt-folder-${folderKey}`} hidden={collapsed}>
                         {!items.length && (
-                          <p className="tt-folder-empty">Pasta vazia. Mova um treino para cá ou adicione um novo.</p>
+                          <p className="tt-folder-empty">
+                            Pasta vazia. Mova um treino para cá ou adicione um
+                            novo.
+                          </p>
                         )}
                         {items.map((preset, presetIndex) => (
-                          <article className="tt-saved-item" key={preset.id} data-preset-id={preset.id}>
+                          <article
+                            className="tt-saved-item"
+                            key={preset.id}
+                            data-preset-id={preset.id}
+                          >
                             <div className="tt-saved-top">
-                              <span className="tt-item-icon tt-order-number" title={`Posição ${presetIndex + 1}`}>
+                              <span
+                                className="tt-item-icon tt-order-number"
+                                title={`Posição ${presetIndex + 1}`}
+                              >
                                 {presetIndex + 1}
                               </span>
                               <div>
@@ -1430,7 +1551,9 @@ export function TabataApp() {
                                 <span className="tt-saved-details">
                                   <span title="Preparação">
                                     <Timer size={13} aria-hidden="true" />
-                                    <span className="sr-only">Preparação: </span>
+                                    <span className="sr-only">
+                                      Preparação:{" "}
+                                    </span>
                                     {preset.workout.preparation}s
                                   </span>
                                   <span
@@ -1463,7 +1586,9 @@ export function TabataApp() {
                                   </span>
                                   <span title="Repetições">
                                     <Repeat2 size={13} aria-hidden="true" />
-                                    <span className="sr-only">Repetições: </span>
+                                    <span className="sr-only">
+                                      Repetições:{" "}
+                                    </span>
                                     {preset.workout.repetitions}
                                   </span>
                                 </span>
@@ -1477,30 +1602,57 @@ export function TabataApp() {
                                     aria-label={`Pasta de ${preset.workout.name}`}
                                     value={preset.folderId ?? ""}
                                     onChange={(event) => {
-                                      const destination = event.target.value || null;
-                                      void mutate((latest) => movePreset(latest, preset.id, destination));
+                                      const destination =
+                                        event.target.value || null;
+                                      void mutate((latest) =>
+                                        movePreset(
+                                          latest,
+                                          preset.id,
+                                          destination,
+                                        ),
+                                      );
                                     }}
                                   >
                                     <option value="">Sem pasta</option>
-                                    {data.folders.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+                                    {data.folders.map((item) => (
+                                      <option key={item.id} value={item.id}>
+                                        {item.name}
+                                      </option>
+                                    ))}
                                   </select>
                                 </label>
                               )}
                               <div className="tt-order-actions">
-                                <button className="tt-icon-button" aria-label={`Subir treino ${preset.workout.name}`}
+                                <button
+                                  className="tt-icon-button"
+                                  aria-label={`Subir treino ${preset.workout.name}`}
                                   disabled={presetIndex === 0}
-                                  onClick={() => { void mutate((latest) => reorderPreset(latest, preset.id, -1)); }}>
+                                  onClick={() => {
+                                    void mutate((latest) =>
+                                      reorderPreset(latest, preset.id, -1),
+                                    );
+                                  }}
+                                >
                                   <ChevronUp size={17} />
                                 </button>
-                                <button className="tt-icon-button" aria-label={`Descer treino ${preset.workout.name}`}
+                                <button
+                                  className="tt-icon-button"
+                                  aria-label={`Descer treino ${preset.workout.name}`}
                                   disabled={presetIndex === items.length - 1}
-                                  onClick={() => { void mutate((latest) => reorderPreset(latest, preset.id, 1)); }}>
+                                  onClick={() => {
+                                    void mutate((latest) =>
+                                      reorderPreset(latest, preset.id, 1),
+                                    );
+                                  }}
+                                >
                                   <ChevronDown size={17} />
                                 </button>
                               </div>
                             </div>
                             <div className="tt-item-actions">
-                              <button onClick={() => loadWorkout(preset.workout)}>
+                              <button
+                                onClick={() => loadWorkout(preset.workout)}
+                              >
                                 <Play size={14} />
                                 Carregar
                               </button>
@@ -1527,7 +1679,10 @@ export function TabataApp() {
                                         ...latest,
                                         presets: latest.presets.map((p) =>
                                           p.id === preset.id
-                                            ? { ...p, workout: { ...p.workout, name } }
+                                            ? {
+                                                ...p,
+                                                workout: { ...p.workout, name },
+                                              }
                                             : p,
                                         ),
                                       }));
@@ -1562,7 +1717,10 @@ export function TabataApp() {
                           </article>
                         ))}
                         {folder && (
-                          <button className="tt-folder-add" onClick={() => newWorkoutInFolder(folderId)}>
+                          <button
+                            className="tt-folder-add"
+                            onClick={() => newWorkoutInFolder(folderId)}
+                          >
                             <Plus size={15} /> Adicionar treino nesta pasta
                           </button>
                         )}
