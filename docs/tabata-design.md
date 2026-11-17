@@ -21,6 +21,17 @@ O usuário aprovou organizar e mover modelos em pastas com nomes livres, sem vin
 - Mover para outra pasta coloca o modelo no final do destino. Excluir uma pasta exige confirmação e move seus modelos para o final de Sem pasta, na ordem atual.
 - Preservar integralmente configurações, preferências e execução ativa. O formato local recebe campos opcionais com valores padrão, mantendo compatibilidade com os registros existentes e a mesma chave de armazenamento.
 
+## Simplificação da biblioteca — 17/11/2026
+
+Após avaliar a biblioteca no celular, o usuário aprovou a proposta de reduzir a quantidade de controles visíveis. A revisão foi disponibilizada localmente, inicialmente sem commit; após a validação, o usuário autorizou commit e publicação.
+
+- Uma única navegação principal: Cronômetro e Meus treinos. A configuração é aberta por Novo treino, Editar ou Carregar, com retorno à biblioteca e revisão antes de iniciar.
+- No uso normal, cada treino mostra posição, nome, séries/duração total e os quatro indicadores com tempos em mm:ss. Somente Carregar e o menu de ações ficam expostos; os demais controles foram retirados dos cards.
+- Menus contextuais para editar, renomear, mover e excluir treinos; nas pastas, adicionar treino, renomear e excluir. Novo reúne criação de treino e de pasta. Mover abre o seletor de destino apenas quando solicitado.
+- Organizar mostra as setas de ordem de pastas/treinos; Concluir volta ao uso normal. O botão de saída permanece acessível mesmo se modelos forem excluídos durante a organização.
+- Menos contornos e divisórias, indicadores em cor neutra e verde reservado à ação principal e estados selecionados. Preservar legibilidade, agrupamento e áreas de toque.
+- Menu acessível por teclado, fechamento por Escape e retorno de foco ao acionador. Ao abrir os formulários, foco no campo de nome ou pasta. Nenhuma mudança no armazenamento ou no relógio de execução.
+
 ## Requisitos estabelecidos pelo usuário
 
 - Adicionar uma rota ao site de links existente.

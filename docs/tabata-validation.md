@@ -107,3 +107,11 @@ Implementadas pastas opcionais de nomes livres, associação de modelos a uma pa
 Os 53 testes e a checagem de tipos passaram. Os novos testes verificam compatibilidade com dados anteriores, nomes, movimentação ao fim do destino, ordenação por grupo, exclusão sem perda e persistência. Um teste do componente real em JSDOM cobre criação/renomeação, setas, seletores, salvar diretamente em pasta, mudar de pasta ao atualizar, excluir, recarregar e manter a execução pausada intacta. O carregador do componente foi compartilhado com o teste já existente dos controles de áudio.
 
 O build de produção e a verificação dos 25 recursos offline passaram; a rota local respondeu normalmente mantendo os campos em mm:ss. A conexão da ferramenta Browser falhou ao carregar seu serviço interno. Assim, a inspeção visual em navegador real permanece para o teste do usuário em localhost. Após disponibilizar a implementação local, o usuário autorizou commit e publicação.
+
+## Revisão de UX da biblioteca — 17/11/2026
+
+Implementadas navegação única, modo Organizar com saída Concluir, menus contextuais para criação e manutenção, seletor de pasta sob demanda e cards compactos com os quatro indicadores em mm:ss. Carregar continua abrindo a revisão da configuração; iniciar exige a ação explícita do usuário. Os dados e o mecanismo de execução não mudaram.
+
+Os 53 testes, a checagem de tipos, o build e a verificação offline passaram. O teste do componente real passou a cobrir os menus por teclado, Escape/retorno de foco, ausência dos controles de organização no uso normal, carregamento sem iniciar, movimentação por diálogo, ordenação, renomeação, exclusão e recarga. Também verifica foco no seletor e a possibilidade de concluir organização quando resta apenas um treino. Os menus não bloqueiam o foco da janela nativa de edição/movimentação.
+
+A integração Browser apresentou o mesmo erro de serviço interno. Após o usuário ativar o acesso, Computer Use funcionou: foram inspecionados o layout no Chrome em 375 × 667 (iPhone SE), a navegação, a apresentação dos indicadores e os menus/diálogo de pasta. Uma janela anônima foi usada para a revisão adicional do estado vazio e da configuração e depois fechada, preservando os modelos da janela normal. A simulação no Chrome não equivale a validar Safari/iPhone físico. Após a revisão local, o usuário autorizou commit e publicação.
