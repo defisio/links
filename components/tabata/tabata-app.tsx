@@ -72,6 +72,17 @@ interface InstallEvent extends Event {
   userChoice: Promise<{ outcome: string }>;
 }
 
+function formatDurationInput(seconds: number): string {
+  return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+function parseDurationInput(text: string): number | null {
+  const trimmed = text.trim();
+  if (/^\d*$/.test(trimmed)) return Number(trimmed);
+  const parts = /^(\d{1,2}):(\d{1,2})$/.exec(trimmed);
+  return parts ? Number(parts[1]) * 60 + Number(parts[2]) : null;
+}
+
 function NumberField({
   label,
   hint,
@@ -79,6 +90,7 @@ function NumberField({
   min = 0,
   max = 3600,
   step = 5,
+  duration = false,
   onChange,
 }: {
   label: string;
@@ -87,23 +99,37 @@ function NumberField({
   min?: number;
   max?: number;
   step?: number;
+  duration?: boolean;
   onChange: (value: number) => void;
 }) {
   const [editing, setEditing] = useState<string | null>(null);
+  const pending = useRef<{ base: number; next: number } | null>(null);
+  useEffect(() => { pending.current = null; }, [value]);
+  const clamp = (next: number) => Math.min(max, Math.max(min, next));
+  const parse = (text: string) => duration ? parseDurationInput(text) : Number(text);
+  const commit = (next: number) => {
+    const bounded = clamp(next);
+    pending.current = { base: value, next: bounded };
+    onChange(bounded);
+  };
+  const parsed = editing !== null ? parse(editing) : null;
+  const current = parsed !== null && Number.isFinite(parsed)
+    ? clamp(Math.round(parsed))
+    : pending.current?.base === value ? pending.current.next : value;
   return (
     <label className="tt-number-field">
       <span className="tt-field-title">
         {label}
         {hint && <small>{hint}</small>}
       </span>
-      <span className="tt-stepper">
+      <span className={`tt-stepper${duration ? " tt-stepper-duration" : ""}`}>
         <button
           type="button"
           aria-label={`Diminuir ${label.toLowerCase()}`}
-          disabled={value <= min}
+          disabled={current <= min}
           onClick={() => {
             setEditing(null);
-            onChange(Math.max(min, value - step));
+            commit(current - step);
           }}
         >
           <Minus size={14} />
@@ -111,37 +137,41 @@ function NumberField({
         <input
           aria-label={label}
           inputMode="numeric"
-          type="number"
-          min={min}
-          max={max}
-          value={editing ?? value}
-          onFocus={() => setEditing(String(value))}
+          type={duration ? "text" : "number"}
+          min={duration ? undefined : min}
+          max={duration ? undefined : max}
+          title={duration ? "Minutos e segundos (mm:ss). Também aceita segundos." : undefined}
+          value={editing ?? (duration ? formatDurationInput(value) : value)}
+          onFocus={() => setEditing(duration ? formatDurationInput(value) : String(value))}
           onChange={(event) => {
             setEditing(event.target.value);
-            const next = Number(event.target.value);
+            const next = parse(event.target.value);
             if (
               event.target.value !== "" &&
-              Number.isInteger(next) &&
+              next !== null && Number.isInteger(next) &&
               next >= min &&
               next <= max
             )
-              onChange(next);
+              commit(next);
           }}
           onBlur={() => {
-            if (editing !== null)
-              onChange(
-                Math.min(max, Math.max(min, Math.round(Number(editing) || 0))),
-              );
+            if (editing !== null) {
+              const next = parse(editing);
+              if (next !== null && Number.isFinite(next)) commit(Math.round(next));
+            }
             setEditing(null);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") event.currentTarget.blur();
           }}
         />
         <button
           type="button"
           aria-label={`Aumentar ${label.toLowerCase()}`}
-          disabled={value >= max}
+          disabled={current >= max}
           onClick={() => {
             setEditing(null);
-            onChange(Math.min(max, value + step));
+            commit(current + step);
           }}
         >
           <Plus size={14} />
@@ -1116,8 +1146,9 @@ export function TabataApp() {
                       <Timer size={18} />
                     </span>
                     <NumberField
+                      duration
                       label="Preparação"
-                      hint="antes de começar · segundos"
+                      hint="antes de começar · min:seg"
                       value={draft.preparation}
                       onChange={(preparation) => updateDraft({ preparation })}
                     />
@@ -1127,8 +1158,9 @@ export function TabataApp() {
                       <Flame size={18} />
                     </span>
                     <NumberField
+                      duration
                       label="Exercício"
-                      hint="hora de se mover · segundos"
+                      hint="hora de se mover · min:seg"
                       min={1}
                       value={draft.exercise}
                       onChange={(exercise) => updateDraft({ exercise })}
@@ -1139,8 +1171,9 @@ export function TabataApp() {
                       <Heart size={18} />
                     </span>
                     <NumberField
+                      duration
                       label="Descanso"
-                      hint="recupere o fôlego · segundos"
+                      hint="recupere o fôlego · min:seg"
                       value={draft.rest}
                       onChange={(rest) => updateDraft({ rest })}
                     />
@@ -1164,24 +1197,27 @@ export function TabataApp() {
                 {advanced && (
                   <div className="tt-expanded">
                     <NumberField
+                      duration
                       label="Pausa entre séries"
-                      hint="substitui o descanso · segundos"
+                      hint="substitui o descanso · min:seg"
                       value={draft.setRest}
                       onChange={(setRest) => updateDraft({ setRest })}
                     />
                     <NumberField
+                      duration
                       label="Aquecimento"
-                      hint="opcional · segundos"
+                      hint="opcional · min:seg"
                       value={draft.warmup}
                       onChange={(warmup) => updateDraft({ warmup })}
                     />
                     <NumberField
+                      duration
                       label="Desaquecimento"
-                      hint="opcional · segundos"
+                      hint="opcional · min:seg"
                       value={draft.cooldown}
                       onChange={(cooldown) => updateDraft({ cooldown })}
                     />
-                    <p>Use 0 para desativar uma fase opcional.</p>
+                    <p>Use 00:00 para desativar uma fase opcional.</p>
                   </div>
                 )}
                 <button

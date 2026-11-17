@@ -681,6 +681,9 @@
 .tt-structure-grid .tt-stepper input {
   width: 100%;
 }
+.tt-stepper-duration input {
+  width: 56px;
+}
 .tt-interval-fields {
   display: flex;
   flex-direction: column;
@@ -1252,6 +1255,9 @@
   }
   .tt-stepper input {
     width: 32px;
+  }
+  .tt-stepper-duration input {
+    width: 56px;
   }
   .tt-local-pill {
     font-size: 8px;
