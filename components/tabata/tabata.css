@@ -1288,8 +1288,8 @@
     padding: 4px;
     border: 1px solid var(--tt-border);
     border-radius: 12px;
-    margin-bottom: 15px;
     background: var(--tt-card);
+    flex: 1
   }
   .tt-mobile-nav > button {
     display: flex;

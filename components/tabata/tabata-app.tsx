@@ -734,6 +734,23 @@ export function TabataApp() {
           >
             <ArrowLeft size={20} />
           </Link>
+          <nav className="tt-mobile-nav" aria-label="Visualização">
+            <button
+              className={mobilePanel === "timer" ? "selected" : ""}
+              onClick={() => setMobilePanel("timer")}
+            >
+              <Timer size={16} />
+              Cronômetro
+            </button>
+            <button
+              className={mobilePanel === "details" ? "selected" : ""}
+              onClick={() => setMobilePanel("details")}
+            >
+              <Settings2 size={16} />
+              Meus treinos
+            </button>
+          </nav>
+
           <button
             className="tt-icon-button"
             aria-label="Preferências"
@@ -743,21 +760,6 @@ export function TabataApp() {
             <Settings2 size={20} />
           </button>
         </header>
-        {/* <div className="tt-intro">
-          <div>
-            <span className="tt-eyebrow">
-              <span className="tt-live-dot" /> MOVIMENTO É AUTOCUIDADO
-            </span>
-            <h1>
-              Seu tempo. <span>Seu ritmo.</span>
-            </h1>
-            <p>Um intervalo de cada vez. Um pouco melhor a cada treino.</p>
-          </div>
-          <span className="tt-local-pill">
-            <ShieldCheck size={15} />
-            Salvo só neste navegador
-          </span>
-        </div> */}
         {notice && (
           <div className="tt-notice" role="alert">
             <span>{notice}</span>
@@ -771,7 +773,7 @@ export function TabataApp() {
           </div>
         )}
 
-        <div className={`tt-workspace tt-show-${mobilePanel} mt-4`}>
+        <div className={`tt-workspace tt-show-${mobilePanel} mt-1`}>
           <section
             ref={timerPanel}
             className={`tt-timer-panel tt-phase-${phaseKind} ${active ? "tt-executing" : ""} ${isFinished ? "tt-complete" : ""}`}
@@ -1396,22 +1398,6 @@ export function TabataApp() {
             )}
           </aside>
         </div>
-        <nav className="tt-mobile-nav mt-4" aria-label="Visualização">
-          <button
-            className={mobilePanel === "timer" ? "selected" : ""}
-            onClick={() => setMobilePanel("timer")}
-          >
-            <Timer size={16} />
-            Cronômetro
-          </button>
-          <button
-            className={mobilePanel === "details" ? "selected" : ""}
-            onClick={() => setMobilePanel("details")}
-          >
-            <Settings2 size={16} />
-            Meus treinos
-          </button>
-        </nav>
         <footer className="tt-footer">
           {/* <span>
             <span className="tt-footer-star">✦</span>Pequenos intervalos.
