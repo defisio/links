@@ -53,11 +53,20 @@ export const DEFAULT_PREFERENCES: Preferences = {
 const schema = z.object({
   version: z.literal(1),
   draft: workoutSchema.extend({ name: z.string().max(80) }),
-  presets: z.array(z.object({ id: z.string(), workout: workoutSchema })),
+  presets: z.array(z.object({
+    id: z.string(),
+    workout: workoutSchema,
+    folderId: z.string().min(1).nullable().default(null),
+  })),
+  folders: z.array(z.object({
+    id: z.string().min(1),
+    name: z.string().trim().min(1).max(80),
+  })).default([]),
   executions: z.array(executionSchema),
   preferences: preferencesSchema,
 });
 export type SavedData = z.infer<typeof schema>;
+export type WorkoutFolder = SavedData["folders"][number];
 export const STORAGE_KEY = "de-fisio.tabata.v1";
 export const DATA_LOCK = "de-fisio.tabata-data";
 export const AUDIO_LOCK = "de-fisio.tabata-audio";
@@ -66,6 +75,7 @@ export function emptyData(): SavedData {
     version: 1,
     draft: { ...CLASSIC, exercises: [] },
     presets: [],
+    folders: [],
     executions: [],
     preferences: { ...DEFAULT_PREFERENCES },
   };
@@ -81,7 +91,14 @@ export function readData(): { data: SavedData; error?: string } {
         error:
           "Os dados salvos não puderam ser lidos. Nenhum registro foi apagado. Você pode começar com o modelo clássico.",
       };
-    return { data: result.data };
+    const folders = new Set(result.data.folders.map((folder) => folder.id));
+    return { data: {
+      ...result.data,
+      presets: result.data.presets.map((preset) => ({
+        ...preset,
+        folderId: preset.folderId && folders.has(preset.folderId) ? preset.folderId : null,
+      })),
+    } };
   } catch {
     return {
       data: emptyData(),

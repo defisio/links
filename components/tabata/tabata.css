@@ -588,6 +588,7 @@
   font-weight: 500;
 }
 .tt-text-field > input,
+.tt-text-field > select,
 .tt-exercise-inputs input {
   width: 100%;
   background: var(--tt-bg);
@@ -905,6 +906,114 @@
   border-radius: 12px;
   margin-top: 12px;
   background: #ffffff01;
+}
+.tt-library-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tt-new-folder {
+  min-height: 40px;
+  padding: 0 10px;
+  font-size: 10px;
+  gap: 6px;
+  white-space: nowrap;
+}
+.tt-library-group + .tt-library-group {
+  margin-top: 24px;
+}
+.tt-folder-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--tt-border);
+}
+.tt-folder-toggle {
+  display: flex;
+  align-items: center;
+  flex: 1 1 130px;
+  min-width: 0;
+  min-height: 44px;
+  gap: 8px;
+  color: var(--tt-accent);
+}
+.tt-folder-toggle > span {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.tt-folder-toggle > small {
+  color: var(--tt-muted);
+  font-size: 10px;
+}
+.tt-folder-toggle > svg {
+  flex-shrink: 0;
+}
+.tt-folder-actions,
+.tt-order-actions {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+.tt-folder-actions > button,
+.tt-order-actions > button {
+  min-width: 40px;
+  min-height: 44px;
+}
+.tt-folder-empty {
+  color: var(--tt-muted);
+  font-size: 11px;
+  padding: 18px 0 8px;
+}
+.tt-folder-add {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--tt-accent);
+}
+.tt-organize-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.tt-organize-row > label {
+  display: flex;
+  flex: 1 1 140px;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  font-size: 9px;
+  color: var(--tt-muted);
+}
+.tt-organize-row select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  background: var(--tt-bg);
+  color: var(--tt-text);
+  border: 1px solid var(--tt-border);
+  border-radius: 7px;
+  font-size: 12px;
+  padding: 6px 8px;
+  text-overflow: ellipsis;
+}
+.tt-order-number {
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.tt-dialog .tt-text-field + .tt-text-field {
+  margin-top: 14px;
 }
 .tt-saved-top {
   display: flex;
@@ -1414,6 +1523,8 @@
     height: 36px;
   }
   .tt-text-field > input,
+  .tt-text-field > select,
+  .tt-organize-row select,
   .tt-exercise-inputs input {
     font-size: 16px;
   }

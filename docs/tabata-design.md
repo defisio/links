@@ -11,6 +11,16 @@ Esta revisão substitui os requisitos anteriores referentes à área de históri
 - Abaixo do resumo de séries, repetições e duração planejada, mostrar os valores configurados de preparação, exercício, descanso e repetições acompanhados dos ícones correspondentes. Manter descrições para leitores de tela e permitir quebra de linha em telas estreitas.
 - Retirar o nome e a marca do cabeçalho do timer. Manter apenas voltar e preferências, com alvos de toque de 44 px em uma faixa de 56 px (48 px em paisagem). Em paisagem, os controles de visualização ficam centralizados entre os dois botões.
 
+## Pastas opcionais — 17/11/2026
+
+O usuário aprovou organizar e mover modelos em pastas com nomes livres, sem vinculação a dias da semana. A implementação foi disponibilizada localmente para validação; em seguida o usuário autorizou commit e publicação.
+
+- Cada modelo pertence a uma pasta ou a Sem pasta. Sem pastas criadas, a biblioteca mantém a lista simples.
+- Criar, renomear, recolher e ordenar pastas; mover modelos pelo seletor Mover para; ordenar modelos dentro de cada grupo pelas setas e mostrar sua posição.
+- Selecionar a pasta ao salvar ou atualizar um modelo; permitir começar a configuração a partir de uma pasta.
+- Mover para outra pasta coloca o modelo no final do destino. Excluir uma pasta exige confirmação e move seus modelos para o final de Sem pasta, na ordem atual.
+- Preservar integralmente configurações, preferências e execução ativa. O formato local recebe campos opcionais com valores padrão, mantendo compatibilidade com os registros existentes e a mesma chave de armazenamento.
+
 ## Requisitos estabelecidos pelo usuário
 
 - Adicionar uma rota ao site de links existente.

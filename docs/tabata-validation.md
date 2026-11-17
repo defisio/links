@@ -99,3 +99,11 @@ Os 49 testes e a checagem de tipos passaram. Os novos casos conferem relógio en
 ## Remoção do relógio de fundo
 
 Após ouvir o resultado, o usuário pediu retirar ClockBackground. Removidos o loop contínuo, a redução de volume associada, o arquivo do relógio no repositório e sua dependência no empacotamento. A contagem 3–2–1 usa um bipe curto independente; permanecem as vozes e os efeitos de troca de fase/conclusão. As preferências voltaram a mostrar Bipes. Os 46 testes passaram, incluindo silêncio entre eventos na faixa real e após retomada; os três testes exclusivos do relógio contínuo foram retirados com a funcionalidade.
+
+## Pastas e ordenação — validação local em 17/11/2026
+
+Implementadas pastas opcionais de nomes livres, associação de modelos a uma pasta ou Sem pasta, movimentação, ordem manual de modelos e de pastas, recolhimento dos grupos e escolha de pasta ao salvar/atualizar. Excluir uma pasta preserva e move seus modelos para Sem pasta. Os registros antigos recebem folders vazio e folderId nulo por padrão na leitura; identificadores de pastas ausentes também retornam a Sem pasta. A configuração de treino e a execução ativa são independentes da organização.
+
+Os 53 testes e a checagem de tipos passaram. Os novos testes verificam compatibilidade com dados anteriores, nomes, movimentação ao fim do destino, ordenação por grupo, exclusão sem perda e persistência. Um teste do componente real em JSDOM cobre criação/renomeação, setas, seletores, salvar diretamente em pasta, mudar de pasta ao atualizar, excluir, recarregar e manter a execução pausada intacta. O carregador do componente foi compartilhado com o teste já existente dos controles de áudio.
+
+O build de produção e a verificação dos 25 recursos offline passaram; a rota local respondeu normalmente mantendo os campos em mm:ss. A conexão da ferramenta Browser falhou ao carregar seu serviço interno. Assim, a inspeção visual em navegador real permanece para o teste do usuário em localhost. Após disponibilizar a implementação local, o usuário autorizou commit e publicação.
