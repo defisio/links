@@ -1,0 +1,22 @@
+name: Check central updates
+
+on:
+  schedule:
+    - cron: '23 12 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['central.config.json', '.github/workflows/update.yml']
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: central-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    uses: WiltonV/central-links/.github/workflows/update-site.yml@v1

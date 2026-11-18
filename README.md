@@ -1,28 +1,50 @@
-# Links para fisioterapeutas
+# Site do profissional
 
-Site estático em Next.js, com página de links e Tabata opcional. A identidade ativa é a de Débora Eduarda, configurada em [`site.config.json`](site.config.json).
+Este repositório guarda a configuração e os arquivos da marca. O aplicativo e seus testes ficam em [WiltonV/central-links](https://github.com/WiltonV/central-links).
 
-```sh
-corepack enable
-yarn install --immutable
-yarn dev
-```
+- `site.config.json`: perfil, links, cores, SEO, endereço e recursos.
+- `public/`: foto, logos e demais arquivos exclusivos deste profissional.
+- `central.config.json`: SHA completo da versão aprovada da central.
 
-Com a configuração atual, abrir `http://localhost:3000/links/`. O caminho vem de `site.basePath`, inclusive em desenvolvimento.
+## Desenvolvimento
 
-## Validar e gerar
+Requer Node.js 20.19 ou superior, Git e Corepack/Yarn disponíveis (`corepack enable`). Não é necessário instalar dependências na raiz deste repositório.
 
 ```sh
-yarn check:config
-yarn test
-yarn typecheck
-yarn build
-yarn check:site-export
-yarn start
+npm run dev
 ```
 
-`yarn start` serve a exportação de `out/`. Para conferir instalação e funcionamento offline do Tabata, usar essa versão de produção.
+O comando busca a revisão aprovada da central, combina com a configuração local em `.site/`, instala as dependências desse aplicativo gerado e inicia o Next.js. O endereço usa o `site.basePath` da configuração.
 
-O workflow existente publica no GitHub Pages ao receber um push em `main`, após testes, checagem de tipos, build e validação da exportação.
+Para testar uma alteração ainda local da central:
 
-Consultar [configuração white label](docs/white-label.md) para personalizar perfil, imagens, cores, links, SEO e recursos. Os dados dos treinos permanecem no navegador.
+```sh
+npm run dev -- --source ../central-links
+npm run build -- --source ../central-links
+```
+
+Esse parâmetro afeta apenas a execução local. Ele não altera a versão aprovada nem publica o site. A mesma opção funciona com `test`, `typecheck`, `check:config` e `check:site-export`.
+
+```sh
+npm test
+npm run typecheck
+npm run build
+npm run check:site-export
+npm start
+```
+
+`npm start` serve a última exportação de `.site/out/`. `.site/` e `.central-links/` são diretórios gerados e ignorados pelo Git.
+
+## Aprovar atualizações
+
+A rotina `Check central updates` consulta a versão estável diariamente e também pode ser iniciada por `Run workflow`. Havendo uma versão nova, ela testa a candidata com os dados deste profissional antes de propor a atualização.
+
+**A publicação só acontece quando você aceita e faz o merge do PR na `main`.** A rotina nunca aprova ou faz merge por conta própria. Fechar um PR sem merge recusa aquela candidata; ela não será proposta novamente.
+
+Se a política do repositório bloquear PRs criados pelo GitHub Actions, a rotina abre uma solicitação em Issues com a branch pronta e o link para criar o PR manualmente. Depois de aceitar ou recusar, feche a solicitação. Não é necessário conceder novas credenciais para esse fluxo.
+
+O GitHub pode atrasar agendamentos e desativá-los em repositórios públicos sem atividade por 60 dias. Nesse caso, reative `Check central updates` em Actions; a execução manual também fica disponível.
+
+Para voltar a uma versão anterior, altere `central.config.json.revision` para o SHA completo que deseja e publique essa alteração pela `main`. O workflow valida a versão antes do deploy. Não altere o `id` do profissional para manter seus treinos salvos.
+
+Os workflows usam o controlador versionado `@v1` da central. Uma mudança futura no contrato desses workflows poderá exigir atualizar essa referência; atualizações normais do aplicativo são propostas pelo campo `revision`.
