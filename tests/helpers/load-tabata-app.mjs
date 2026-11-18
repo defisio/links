@@ -1,3 +1,4 @@
+import * as siteConfigModule from "../../lib/site-config.mjs";
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { createRequire } from "node:module";
@@ -22,6 +23,7 @@ export function loadApp() {
       },
     }).outputText;
     const localRequire = (name) => {
+      if (name.endsWith("site-config.mjs")) return siteConfigModule;
       if (name.endsWith(".css")) return {};
       if (name === "next/link")
         return {

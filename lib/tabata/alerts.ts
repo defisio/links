@@ -1,7 +1,10 @@
+import { getTabataKeys, siteConfig } from "../site-config.mjs";
 import type { Phase } from "./engine";
 import type { Preferences } from "./storage";
 import { renderWorkoutTrack, TRACK_SAMPLE_RATE } from "./audio-track";
 import { getPhaseVoices, getWorkoutEffects } from "./phase-voices";
+
+const keys = getTabataKeys();
 
 type AudioSession = { type: string };
 type AudioNavigator = Navigator & { audioSession?: AudioSession };
@@ -112,7 +115,7 @@ export class WorkoutAlerts {
       });
       if (typeof BroadcastChannel !== "undefined") {
         if (!this.channel) {
-          this.channel = new BroadcastChannel("de-fisio.tabata-soundtrack");
+          this.channel = new BroadcastChannel(keys.soundtrack);
           this.channel.onmessage = () => this.deactivate();
         }
         this.channel.postMessage("playing");
@@ -123,8 +126,8 @@ export class WorkoutAlerts {
           if (typeof MediaMetadata !== "undefined")
             navigator.mediaSession.metadata = new MediaMetadata({
               title: name,
-              artist: "Débora Eduarda",
-              album: "Tabata Timer",
+              artist: siteConfig.profile.name,
+              album: siteConfig.timer.name,
             });
           navigator.mediaSession.setActionHandler("pause", () => {
             this.deactivate(true);
@@ -161,14 +164,14 @@ export class WorkoutAlerts {
     this.emitted.add(key);
     try {
       const raw = JSON.parse(
-        localStorage.getItem("de-fisio.tabata.alerts") || "[]",
+        localStorage.getItem(keys.alerts) || "[]",
       );
       const recent: string[] = Array.isArray(raw)
         ? raw.filter((value) => typeof value === "string")
         : [];
       if (recent.includes(key)) return false;
       localStorage.setItem(
-        "de-fisio.tabata.alerts",
+        keys.alerts,
         JSON.stringify([key, ...recent].slice(0, 64)),
       );
     } catch {

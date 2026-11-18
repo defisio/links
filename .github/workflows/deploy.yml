@@ -32,14 +32,17 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Test timer
-        run: yarn test:tabata
+      - name: Test site and timer
+        run: yarn test
+
+      - name: Typecheck
+        run: yarn typecheck
 
       - name: Build
         run: yarn build
 
-      - name: Validate exported timer
-        run: yarn check:tabata-export
+      - name: Validate exported site
+        run: yarn check:site-export
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

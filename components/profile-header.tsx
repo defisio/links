@@ -1,29 +1,27 @@
-"use client";
-
 import Image from "next/image";
-import { assetPath } from "@/lib/utils";
+import { assetPath, siteConfig } from "@/lib/site-config.mjs";
 
 export function ProfileHeader() {
+  const { profile, assets } = siteConfig;
   return (
     <div className="flex flex-col items-center text-center opacity-0 animate-fade-in-up">
       <div className="relative mb-6">
         <div className="absolute -inset-1 rounded-full bg-primary/20 blur-md" />
         <Image
-          src={assetPath("/avatar.png")}
-          alt="Foto de perfil"
-          width={120}
-          height={120}
+          src={assetPath(assets.avatar.src)}
+          alt={assets.avatar.alt}
+          width={assets.avatar.width}
+          height={assets.avatar.height}
           className="relative rounded-full border-2 border-primary/30 object-cover"
           priority
         />
       </div>
       <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl text-balance">
-        Débora Eduarda
+        {profile.name}
       </h1>
-      <p className="mt-1 font-mono text-sm text-primary">@deborae.fisio</p>
+      {profile.handle && <p className="mt-1 font-mono text-sm text-primary">{profile.handle}</p>}
       <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground text-pretty text-center">
-        Fisioterapia traumato-ortopédica esportiva, especializada em
-        reabilitação de joelho <br />
+        {profile.bio} <br />
       </p>
     </div>
   );

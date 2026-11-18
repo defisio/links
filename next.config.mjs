@@ -1,7 +1,9 @@
+import { siteConfig } from "./lib/site-config.mjs";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export",
-  basePath: "/links",
+  basePath: siteConfig.site.basePath,
   trailingSlash: true,
   images: {
     unoptimized: true,

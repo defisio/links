@@ -1,14 +1,14 @@
 .tt-app {
-  --tt-bg: #090e0d;
-  --tt-card: #101715;
-  --tt-surface: #171e1b;
-  --tt-border: #28312b;
-  --tt-text: #f0f2eb;
-  --tt-muted: #8e9b92;
-  --tt-accent: #c4f58a;
+  --tt-bg: var(--brand-timer-background);
+  --tt-card: var(--brand-timer-card);
+  --tt-surface: var(--brand-timer-surface);
+  --tt-border: var(--brand-timer-border);
+  --tt-text: var(--brand-timer-text);
+  --tt-muted: var(--brand-timer-muted);
+  --tt-accent: var(--brand-timer-accent);
   min-height: 100svh;
   background:
-    radial-gradient(ellipse at 3% 0%, #23332255, transparent 36%), var(--tt-bg);
+    radial-gradient(ellipse at 3% 0%, var(--brand-timer-glow), transparent 36%), var(--tt-bg);
   color: var(--tt-text);
   font-size: 14px;
   line-height: 1.5;
@@ -128,7 +128,7 @@
   align-items: start;
 }
 .tt-timer-panel {
-  --phase: #c4f58a;
+  --phase: var(--tt-accent);
   background:
     radial-gradient(ellipse at 50% 38%, #9ab25a0a, transparent 60%),
     var(--tt-card);
@@ -172,7 +172,7 @@
   background: #1b1524;
 }
 .tt-complete {
-  --phase: #c4f58a;
+  --phase: var(--tt-accent);
 }
 .tt-panel-top {
   padding: 18px 22px;
@@ -393,10 +393,10 @@
 .tt-button.primary {
   background: var(--tt-accent);
   border-color: var(--tt-accent);
-  color: #15240b;
+  color: var(--brand-timer-onAccent);
 }
 .tt-button.primary:hover {
-  background: #d3ffa3;
+  background: var(--brand-timer-accentHover);
 }
 .tt-button.secondary {
   background: var(--tt-surface);
@@ -701,7 +701,7 @@
 }
 .tt-interval-row.work .tt-phase-icon {
   color: var(--tt-accent);
-  border-color: #c4f58a22;
+  border-color: color-mix(in srgb, var(--tt-accent) 13.33%, transparent);
 }
 .tt-interval-row.rest .tt-phase-icon {
   color: #efa093;
@@ -767,7 +767,7 @@
   color: #d1ddc6;
 }
 .tt-save-button:hover {
-  background: #c4f58a08;
+  background: color-mix(in srgb, var(--tt-accent) 3.14%, transparent);
   border-color: #869b76;
 }
 .tt-auto-save {
@@ -942,7 +942,7 @@
   color: var(--tt-muted);
 }
 .tt-organize-button.active {
-  background: #c4f58a0c;
+  background: color-mix(in srgb, var(--tt-accent) 4.71%, transparent);
   color: var(--tt-accent);
 }
 .tt-organize-hint {
@@ -1342,7 +1342,7 @@
   background: var(--tt-card);
   border: 0;
   border-radius: 0;
-  --phase: #c4f58a;
+  --phase: var(--tt-accent);
 }
 .tt-timer-panel:fullscreen .tt-timer-stage {
   width: min(650px, 95vw);

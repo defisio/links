@@ -1,3 +1,4 @@
+import * as siteConfigModule from "../lib/site-config.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -135,7 +136,7 @@ function audioEnvironment({
     exports,
     module: { exports },
     navigator,
-    require: name => name === "./phase-voices" ? voiceExports : trackExports,
+    require: name => name.endsWith("site-config.mjs") ? siteConfigModule : name === "./phase-voices" ? voiceExports : trackExports,
     URL,
     Blob,
     window: { AudioContext: Context },

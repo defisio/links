@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { siteConfig } from "@/lib/site-config.mjs";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import {
   ArrowLeft,
@@ -327,7 +328,7 @@ function ConfirmDialog({
         >
           <X size={20} />
         </button>
-        <span className="tt-eyebrow">TABATA · DÉBORA EDUARDA</span>
+        <span className="tt-eyebrow">TABATA · {siteConfig.profile.name.toLocaleUpperCase(siteConfig.site.language)}</span>
         <h2 id="tt-confirm-title">{dialog.title}</h2>
         {dialog.description && <p id="tt-confirm-description">{dialog.description}</p>}
         {dialog.initial !== undefined && (

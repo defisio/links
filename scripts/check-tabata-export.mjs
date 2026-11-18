@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { Script, createContext } from "node:vm";
 import nextConfig from "../next.config.mjs";
+import { siteConfig, siteURL, getSiteLinks } from "../lib/site-config.mjs";
+import { getTimerManifest } from "../lib/site-presentation.mjs";
 
 // Exercise the real exported shell/assets in a worker harness; this is not a browser test.
 const origin = "https://tabata.test";
@@ -14,11 +16,14 @@ const appURL = origin + timerPath;
 const html = await readFile("out/timer/index.html", "utf8");
 const home = await readFile("out/index.html", "utf8");
 const source = await readFile("out/timer/sw.js", "utf8");
-assert.ok(home.includes(`href="${timerPath}"`));
+if (getSiteLinks().some((link) => link.href === "/timer/"))
+  assert.ok(home.includes(`href="${timerPath}"`));
 assert.equal((html.match(/rel="canonical"/g) || []).length, 1);
 assert.ok(
-  html.includes(`canonical" href="https://defisio.github.io${timerPath}"`),
+  html.includes(`canonical" href="${siteURL("/timer/")}"`),
 );
+assert.deepEqual(manifest, getTimerManifest());
+assert.ok(html.includes(siteConfig.timer.name));
 assert.ok(
   !source.includes("__BUILD_ID__"),
   "Worker needs a build-specific cache",

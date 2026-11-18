@@ -1,12 +1,10 @@
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { resolve, extname, sep } from "node:path";
+import { siteConfig } from "../lib/site-config.mjs";
 
 const root = resolve("out");
-const manifest = JSON.parse(
-  await readFile(resolve(root, "timer/manifest.webmanifest"), "utf8"),
-);
-const basePath = manifest.scope.replace(/\/timer\/$/, "");
+const basePath = siteConfig.site.basePath;
 const port = Number(process.env.PORT || 3000);
 const mime = {
   ".html": "text/html; charset=utf-8",
@@ -68,8 +66,10 @@ const server = createServer(async (request, response) => {
     response.end("Not found");
   }
 });
-server.listen(port, "127.0.0.1", () =>
-  console.log(`Tabata: http://localhost:${port}${manifest.scope}`),
-);
+server.listen(port, "127.0.0.1", () => {
+  console.log(`Site: http://localhost:${port}${basePath}/`);
+  if (siteConfig.features.tabata)
+    console.log(`Tabata: http://localhost:${port}${basePath}/timer/`);
+});
 for (const signal of ["SIGINT", "SIGTERM"])
   process.on(signal, () => server.close(() => process.exit(0)));

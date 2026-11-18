@@ -1,3 +1,5 @@
+import * as siteConfigModule from "../lib/site-config.mjs";
+import * as sitePresentationModule from "../lib/site-presentation.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -28,8 +30,10 @@ new Script(compiled).runInNewContext({
   module,
   exports: module.exports,
   require: (name) =>
-    name === "next/font/google"
-      ? { Plus_Jakarta_Sans: () => ({ variable: "test-font" }) }
+    name === "@/lib/site-config.mjs" ? siteConfigModule
+      : name === "@/lib/site-presentation.mjs" ? sitePresentationModule
+      : name === "next/font/local"
+      ? { __esModule: true, default: () => ({ variable: "test-font" }) }
       : name === "@/lib/utils"
         ? { assetPath: (path) => path }
         : name.endsWith(".css")

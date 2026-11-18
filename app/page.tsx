@@ -1,68 +1,8 @@
 import { ProfileHeader } from "@/components/profile-header";
 import { LinkCard } from "@/components/link-card";
 import { SocialFooter } from "@/components/social-footer";
-import { Timer } from "lucide-react";
-import { assetPath } from "@/lib/utils";
-import {
-  WhatsAppIcon,
-  InstagramIcon,
-  EmailIcon,
-  // YouTubeIcon,
-  // TikTokIcon,
-  // GlobeIcon,
-  SpotifyIcon,
-} from "@/components/social-icons";
-
-const links = [
-  {
-    href: "https://wa.me/5598991328659",
-    icon: <WhatsAppIcon className="h-5 w-5" />,
-    label: "WhatsApp",
-    description: "Fale comigo diretamente",
-  },
-  {
-    href: "https://instagram.com/deborae.fisio/",
-    icon: <InstagramIcon className="h-5 w-5" />,
-    label: "Instagram",
-    description: "@deborae.fisio",
-  },
-  {
-    href: "mailto:deboraeduardafisio@gmail.com",
-    icon: <EmailIcon className="h-5 w-5" />,
-    label: "E-mail",
-    description: "deboraeduardafisio@gmail.com",
-  },
-  {
-    href: assetPath("/timer/"),
-    icon: <Timer className="h-5 w-5" />,
-    label: "Tabata Timer",
-    description: "Seu tempo, seu ritmo. Monte seu treino.",
-  },
-  // {
-  //   href: "https://youtube.com",
-  //   icon: <YouTubeIcon className="h-5 w-5" />,
-  //   label: "YouTube",
-  //   description: "Meu canal de videos",
-  // },
-  // {
-  //   href: "https://tiktok.com",
-  //   icon: <TikTokIcon className="h-5 w-5" />,
-  //   label: "TikTok",
-  //   description: "Conteudo rapido e divertido",
-  // },
-  // {
-  //   href: "https://spotify.com",
-  //   icon: <SpotifyIcon className="h-5 w-5" />,
-  //   label: "Spotify",
-  //   description: "Minhas playlists favoritas",
-  // },
-  // {
-  //   href: "https://meusite.com",
-  //   icon: <GlobeIcon className="h-5 w-5" />,
-  //   label: "Meu Site",
-  //   description: "Portfolio e projetos",
-  // },
-];
+import { SiteLinkIcon } from "@/components/site-link-icon";
+import { assetPath, getSiteLinks } from "@/lib/site-config.mjs";
 
 export default function Page() {
   return (
@@ -72,7 +12,7 @@ export default function Page() {
         className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-[300px] w-[300px] sm:h-[500px] sm:w-[500px] max-w-[90vw] rounded-full opacity-[0.07]"
         style={{
           background:
-            "radial-gradient(circle, hsl(168 70% 50%) 0%, transparent 70%)",
+            "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
         }}
         aria-hidden="true"
       />
@@ -84,11 +24,11 @@ export default function Page() {
           className="flex flex-col gap-3"
           aria-label="Links de contato e redes sociais"
         >
-          {links.map((link, index) => (
+          {getSiteLinks().map((link, index) => (
             <LinkCard
-              key={link.label}
-              href={link.href}
-              icon={link.icon}
+              key={link.id}
+              href={assetPath(link.href)}
+              icon={<SiteLinkIcon name={link.icon} className="h-5 w-5" />}
               label={link.label}
               description={link.description}
               delay={200 + index * 80}

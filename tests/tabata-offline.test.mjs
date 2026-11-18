@@ -6,11 +6,12 @@ import { Script, createContext } from "node:vm";
 const source = readFileSync(
   new URL("../public/timer/sw.js", import.meta.url),
   "utf8",
-);
+).replace("/*__SITE_ICON_PATHS__*/ []", JSON.stringify(["/timer/icon-512.png", "/assets/custom-icon.png"]));
 function worker() {
   const listeners = {};
   const entries = new Map();
   const requested = [];
+  const deleted = [];
   const cache = {
     put: async (key, value) =>
       entries.set(
@@ -44,8 +45,11 @@ function worker() {
     },
     caches: {
       open: async () => cache,
-      keys: async () => ["de-tabata-offline-v1", "other-app-cache"],
-      delete: async () => true,
+      keys: async () => [
+        "tabata-offline:/timer/:old-build", "tabata-offline:/timer/:__BUILD_ID__",
+        "tabata-offline:/other/timer/:other-build", "other-app-cache",
+      ],
+      delete: async (key) => { deleted.push(key); return true; },
     },
     fetch: async (resource) => {
       if (offline) throw new Error("offline");
@@ -57,6 +61,8 @@ function worker() {
       const body =
         url.pathname === "/timer/"
           ? '<html><link href="/_next/static/chunks/app.css" rel="stylesheet"><script src="/_next/static/chunks/app.js"></script></html>'
+          : url.pathname.endsWith(".webmanifest")
+            ? JSON.stringify({ icons: [{ src: "/timer/icon-512.png" }, { src: "/assets/custom-icon.png" }] })
           : url.pathname.endsWith(".css")
             ? "@font-face{src:url(../media/font.woff2)}"
             : "asset";
@@ -70,6 +76,7 @@ function worker() {
     listeners,
     requested,
     entries,
+    deleted,
     goOffline: () => {
       offline = true;
     },
@@ -91,6 +98,7 @@ test("offline install caches the exported shell, JS, CSS, fonts and installation
     "/_next/static/chunks/app.css",
     "/_next/static/media/font.woff2",
     "/timer/icon-512.png",
+    "/assets/custom-icon.png",
   ]) {
     assert.ok(w.requested.includes(pathname), `Missing ${pathname}`);
   }
@@ -135,6 +143,19 @@ test("offline install caches the exported shell, JS, CSS, fonts and installation
     },
   });
   assert.equal(await (await response).text(), "asset");
+  w.listeners.fetch({
+    request: { url: "https://example.com/assets/custom-icon.png", method: "GET", mode: "cors" },
+    respondWith: (promise) => { response = promise; },
+  });
+  assert.equal(await (await response).text(), "asset", "Configured icons outside /timer/ must work offline");
+});
+
+test("activating an update cleans only the current site's scope and preserves other sites", async () => {
+  const w = worker();
+  let activated;
+  w.listeners.activate({ waitUntil: (promise) => { activated = promise; } });
+  await activated;
+  assert.deepEqual(w.deleted, ["tabata-offline:/timer/:old-build"]);
 });
 
 test("worker ignores other sites and unrelated paths", () => {

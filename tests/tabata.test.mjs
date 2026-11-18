@@ -15,12 +15,14 @@ const compile = (path) =>
       target: ts.ScriptTarget.ES2022,
     },
   }).outputText;
+const siteConfigURL = new URL("../lib/site-config.mjs", import.meta.url).href;
+const withSiteConfig = (source) => source.replace(/from ['"]\.\.\/site-config\.mjs['"]/, `from '${siteConfigURL}'`);
 const engineURL = asModule(compile("../lib/tabata/engine.ts"));
 const engine = await import(engineURL);
 const require = createRequire(import.meta.url);
 const storage = await import(
   asModule(
-    compile("../lib/tabata/storage.ts")
+    withSiteConfig(compile("../lib/tabata/storage.ts"))
       .replace(/from ['"]\.\/engine['"]/, `from '${engineURL}'`)
       .replace(
         /from ['"]zod['"]/,
@@ -257,7 +259,7 @@ test("voice, beeps and vibration start enabled", () => {
 test("alert ownership transfers without repeating already emitted phase signals", async () => {
   const { WorkoutAlerts } = await import(
     asModule(
-      compile("../lib/tabata/alerts.ts").replace(/from ['"]\.\/phase-voices['"]/, `from '${asModule(compile("../lib/tabata/phase-voices.ts"))}'`).replace(
+      withSiteConfig(compile("../lib/tabata/alerts.ts")).replace(/from ['"]\.\/phase-voices['"]/, `from '${asModule(compile("../lib/tabata/phase-voices.ts"))}'`).replace(
         /from ['"]\.\/audio-track['"]/,
         `from '${asModule(compile("../lib/tabata/audio-track.ts"))}'`,
       ),

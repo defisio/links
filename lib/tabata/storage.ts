@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getTabataKeys } from "../site-config.mjs";
 import { CLASSIC, type Execution, type Workout } from "./engine";
 
 const seconds = z.number().int().min(0).max(3600);
@@ -67,9 +68,10 @@ const schema = z.object({
 });
 export type SavedData = z.infer<typeof schema>;
 export type WorkoutFolder = SavedData["folders"][number];
-export const STORAGE_KEY = "de-fisio.tabata.v1";
-export const DATA_LOCK = "de-fisio.tabata-data";
-export const AUDIO_LOCK = "de-fisio.tabata-audio";
+const keys = getTabataKeys();
+export const STORAGE_KEY = keys.storage;
+export const DATA_LOCK = keys.dataLock;
+export const AUDIO_LOCK = keys.audioLock;
 export function emptyData(): SavedData {
   return {
     version: 1,

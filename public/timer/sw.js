@@ -1,6 +1,9 @@
 /* The worker caches the app, not a timer. Clock recovery uses persisted timestamps. */
-const CACHE = "de-tabata-offline-v1-__BUILD_ID__";
 const ROOT = new URL("./", self.location.href).pathname;
+// CacheStorage is shared by every site on the origin. Only clean this scope.
+const CACHE_PREFIX = `tabata-offline:${ROOT}:`;
+const CACHE = `${CACHE_PREFIX}__BUILD_ID__`;
+const ICON_PATHS = new Set(/*__SITE_ICON_PATHS__*/ []);
 const BASE = new URL("../", self.location.href).pathname;
 const APP = ROOT;
 const READY = new URL("offline-ready", self.location.href).href;
@@ -14,12 +17,10 @@ async function prepareOffline() {
   const cache = await caches.open(CACHE);
   const response = await store(cache, APP);
   const html = await response.text();
+  const manifestURL = ROOT + "manifest.webmanifest";
+  const manifestResponse = await store(cache, manifestURL);
+  const manifest = await manifestResponse.json();
   const assets = new Set([
-    ROOT + "manifest.webmanifest",
-    ROOT + "icon.svg",
-    ROOT + "icon-192.png",
-    ROOT + "icon-512.png",
-    ROOT + "icon-maskable.png",
     ROOT + "ready.wav",
     ROOT + "countdown.wav",
     ROOT + "transition.wav",
@@ -27,6 +28,10 @@ async function prepareOffline() {
     ROOT + "voice-test.wav",
     ROOT + "unlock.wav",
   ]);
+  for (const icon of manifest.icons || []) {
+    const url = new URL(icon.src, new URL(manifestURL, self.location.href));
+    if (url.origin === self.location.origin) assets.add(url.href);
+  }
   for (const match of html.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
     const url = new URL(
       match[1].replaceAll("&amp;", "&"),
@@ -68,7 +73,7 @@ self.addEventListener("activate", (event) =>
       await Promise.all(
         (await caches.keys())
           .filter(
-            (key) => key.startsWith("de-tabata-offline-") && key !== CACHE,
+            (key) => key.startsWith(CACHE_PREFIX) && key !== CACHE,
           )
           .map((key) => caches.delete(key)),
       );
@@ -92,7 +97,8 @@ self.addEventListener("fetch", (event) => {
     return;
   if (
     !url.pathname.startsWith(ROOT) &&
-    !url.pathname.startsWith(BASE + "_next/static/")
+    !url.pathname.startsWith(BASE + "_next/static/") &&
+    !ICON_PATHS.has(url.pathname)
   )
     return;
   if (event.request.mode === "navigate") {

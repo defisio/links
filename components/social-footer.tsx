@@ -1,61 +1,36 @@
-"use client";
-
-import {
-  InstagramIcon,
-  SpotifyIcon,
-  WhatsAppIcon,
-  EmailIcon,
-} from "@/components/social-icons";
-import { assetPath } from "@/lib/utils";
 import Image from "next/image";
-
-const socialLinks = [
-  {
-    href: "https://wa.me/5598991328659",
-    icon: WhatsAppIcon,
-    label: "WhatsApp",
-  },
-  {
-    href: "https://instagram.com/deborae.fisio/",
-    icon: InstagramIcon,
-    label: "Instagram",
-  },
-  {
-    href: "mailto:deboraeduardafisio@gmail.com",
-    icon: EmailIcon,
-    label: "Email",
-  },
-  // { href: "https://spotify.com", icon: SpotifyIcon, label: "Spotify" },
-];
+import { assetPath, getSiteLinks, siteConfig } from "@/lib/site-config.mjs";
+import { SiteLinkIcon } from "@/components/site-link-icon";
 
 export function SocialFooter() {
+  const socialLinks = getSiteLinks().filter((link) => link.showInFooter);
+  const { logo } = siteConfig.assets;
   return (
     <footer
       className="flex flex-col items-center gap-6 opacity-0 animate-fade-in-up"
       style={{ animationDelay: "800ms" }}
     >
-      <div className="flex items-center gap-3">
+      {socialLinks.length > 0 && <div className="flex items-center gap-3">
         {socialLinks.map((link) => (
           <a
-            key={link.label}
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
+            key={link.id}
+            href={assetPath(link.href)}
+            target={link.href.startsWith("/") ? undefined : "_blank"}
+            rel={link.href.startsWith("/") ? undefined : "noopener noreferrer"}
             aria-label={link.label}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-300 hover:border-primary/40 hover:text-primary hover:bg-secondary hover:scale-110"
           >
-            <link.icon className="h-4 w-4" />
+            <SiteLinkIcon name={link.icon} className="h-4 w-4" />
           </a>
         ))}
-      </div>
-      <Image
-        src={assetPath("/DE-Reduzida-Typo-Branco.png")}
-        alt="Foto de perfil"
-        width={250}
-        height={250}
-        // className="relative rounded-full border-2 border-primary/30 object-cover"
+      </div>}
+      {logo && <Image
+        src={assetPath(logo.src)}
+        alt={logo.alt}
+        width={logo.width}
+        height={logo.height}
         priority
-      />
+      />}
     </footer>
   );
 }

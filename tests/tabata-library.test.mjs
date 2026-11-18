@@ -1,3 +1,4 @@
+import * as siteConfigModule from "../lib/site-config.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -10,7 +11,7 @@ function load(file){
  if(cache.has(file))return cache.get(file).exports;
  const module={exports:{}};cache.set(file,module);
  const source=ts.transpileModule(readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- const local=name=>name.startsWith('./')?load(resolve(dirname(file),name+'.ts')):require(name);
+ const local=name=>name.endsWith('site-config.mjs')?siteConfigModule:name.startsWith('./')?load(resolve(dirname(file),name+'.ts')):require(name);
  new Script(`(function(require,module,exports){${source}\n})`,{filename:file}).runInThisContext()(local,module,module.exports);
  return module.exports;
 }
