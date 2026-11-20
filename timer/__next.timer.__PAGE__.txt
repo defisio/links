@@ -1,0 +1,7 @@
+1:"$Sreact.fragment"
+2:I[461,["955","static/chunks/955-eb143ea79642fc4f.js","416","static/chunks/app/timer/page-c1f77b7546956591.js"],"TabataApp"]
+3:I[484,[],"OutletBoundary"]
+4:"$Sreact.suspense"
+:HL["/links/_next/static/css/56c0725549e38b5a.css","style"]
+0:{"buildId":"UIWn6CoegqvdpsWRKKv44","rsc":["$","$1","c",{"children":[["$","$L2",null,{}],[["$","link","0",{"rel":"stylesheet","href":"/links/_next/static/css/56c0725549e38b5a.css","precedence":"next"}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

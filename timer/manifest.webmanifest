@@ -1,0 +1,38 @@
+{
+  "id": "/links/timer/",
+  "name": "Tabata Timer · Débora Eduarda",
+  "short_name": "Tabata · DE",
+  "description": "Seu tempo, seu ritmo. Timer de treino intervalado.",
+  "lang": "pt-BR",
+  "start_url": "/links/timer/",
+  "scope": "/links/timer/",
+  "display": "standalone",
+  "background_color": "#090e0d",
+  "theme_color": "#090e0d",
+  "icons": [
+    {
+      "src": "/links/timer/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/links/timer/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/links/timer/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/links/timer/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
