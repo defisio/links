@@ -20,7 +20,10 @@
       "country": "BR",
       "postalCode": "65000-000"
     },
-    "geo": { "latitude": -2.5297, "longitude": -44.2963 },
+    "geo": {
+      "latitude": -2.5297,
+      "longitude": -44.2963
+    },
     "socialProfiles": [
       "https://www.instagram.com/deborae.fisio",
       "https://wa.me/5598991328659"
@@ -36,10 +39,25 @@
     ]
   },
   "assets": {
-    "avatar": { "src": "/avatar.png", "alt": "Foto de Débora Eduarda", "width": 120, "height": 120 },
-    "logo": { "src": "/DE-Reduzida-Typo-Branco.png", "alt": "Logo de Débora Eduarda", "width": 250, "height": 250 },
+    "avatar": {
+      "src": "/avatar.png",
+      "alt": "Foto de Débora Eduarda",
+      "width": 120,
+      "height": 120
+    },
+    "logo": {
+      "src": "/DE-Reduzida-Typo-Branco.png",
+      "alt": "Logo de Débora Eduarda",
+      "width": 250,
+      "height": 250
+    },
     "favicon": "/DE-Reduzida.svg",
-    "socialImage": { "src": "/DE3-Logo-Branco.png", "alt": "Fisioterapeuta Débora Eduarda", "width": 120, "height": 120 }
+    "socialImage": {
+      "src": "/DE3-Logo-Branco.png",
+      "alt": "Fisioterapeuta Débora Eduarda",
+      "width": 120,
+      "height": 120
+    }
   },
   "theme": {
     "home": {
@@ -67,12 +85,42 @@
     }
   },
   "links": [
-    { "id": "whatsapp", "icon": "whatsapp", "href": "https://wa.me/5598991328659", "label": "WhatsApp", "description": "Fale comigo diretamente", "showInFooter": true },
-    { "id": "instagram", "icon": "instagram", "href": "https://instagram.com/deborae.fisio/", "label": "Instagram", "description": "@deborae.fisio", "showInFooter": true },
-    { "id": "email", "icon": "email", "href": "mailto:deboraeduardafisio@gmail.com", "label": "E-mail", "description": "deboraeduardafisio@gmail.com", "showInFooter": true },
-    { "id": "tabata", "icon": "timer", "href": "/timer/", "label": "Tabata Timer", "description": "Seu tempo, seu ritmo. Monte seu treino.", "feature": "tabata" }
+    {
+      "id": "whatsapp",
+      "icon": "whatsapp",
+      "href": "https://wa.me/5598991328659",
+      "label": "WhatsApp",
+      "description": "Fale comigo diretamente",
+      "showInFooter": true
+    },
+    {
+      "id": "instagram",
+      "icon": "instagram",
+      "href": "https://instagram.com/deborae.fisio/",
+      "label": "Instagram",
+      "description": "@deborae.fisio",
+      "showInFooter": true
+    },
+    {
+      "id": "email",
+      "icon": "email",
+      "href": "mailto:deboraeduardafisio@gmail.com",
+      "label": "E-mail",
+      "description": "deboraeduardafisio@gmail.com",
+      "showInFooter": true
+    },
+    {
+      "id": "tabata",
+      "icon": "timer",
+      "href": "/timer/",
+      "label": "Tabata Timer",
+      "description": "Seu tempo, seu ritmo. Monte seu treino.",
+      "feature": "tabata"
+    }
   ],
-  "features": { "tabata": true },
+  "features": {
+    "tabata": true
+  },
   "seo": {
     "title": "Débora Eduarda - Fisioterapeuta em São Luís do Maranhão | Especialista em Joelho",
     "description": "Fisioterapeuta Débora Eduarda em São Luís - MA. Especialista em fisioterapia traumato-ortopédica esportiva e reabilitação de joelho. Agende sua consulta.",
@@ -87,16 +135,39 @@
       "alternateName": "Fisioterapia Joelho São Luís",
       "description": "Fisioterapeuta especialista em joelho em São Luís do Maranhão. Tratamento de LCA, menisco, condromalácia patelar, fisioterapia traumato-ortopédica e esportiva. Reabilitação pós-operatório de joelho.",
       "priceRange": "$$",
-      "specialties": ["Fisioterapia Ortopédica", "Fisioterapia Esportiva", "Reabilitação de Joelho"],
-      "sameAs": ["https://www.instagram.com/deborae.fisio"],
+      "specialties": [
+        "Fisioterapia Ortopédica",
+        "Fisioterapia Esportiva",
+        "Reabilitação de Joelho"
+      ],
+      "sameAs": [
+        "https://www.instagram.com/deborae.fisio"
+      ],
       "areaServed": [
-        { "type": "City", "name": "São Luís", "url": "https://www.wikidata.org/wiki/Q28441" },
-        { "type": "State", "name": "Maranhão", "url": "https://www.wikidata.org/wiki/Q42362" }
+        {
+          "type": "City",
+          "name": "São Luís",
+          "url": "https://www.wikidata.org/wiki/Q28441"
+        },
+        {
+          "type": "State",
+          "name": "Maranhão",
+          "url": "https://www.wikidata.org/wiki/Q42362"
+        }
       ],
       "services": [
-        { "name": "Reabilitação de Joelho", "description": "Tratamento especializado para lesões de joelho incluindo LCA, menisco e condromalácia" },
-        { "name": "Fisioterapia Pós-Operatório", "description": "Reabilitação após cirurgias de joelho" },
-        { "name": "Fisioterapia Esportiva", "description": "Tratamento e prevenção de lesões esportivas" }
+        {
+          "name": "Reabilitação de Joelho",
+          "description": "Tratamento especializado para lesões de joelho incluindo LCA, menisco e condromalácia"
+        },
+        {
+          "name": "Fisioterapia Pós-Operatório",
+          "description": "Reabilitação após cirurgias de joelho"
+        },
+        {
+          "name": "Fisioterapia Esportiva",
+          "description": "Tratamento e prevenção de lesões esportivas"
+        }
       ]
     }
   },
@@ -112,6 +183,7 @@
       "small": "/timer/icon-192.png",
       "large": "/timer/icon-512.png",
       "maskable": "/timer/icon-maskable.png"
-    }
+    },
+    "shareUrl": "https://defisio.github.io/links/timer/"
   }
 }
