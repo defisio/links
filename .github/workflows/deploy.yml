@@ -1,0 +1,42 @@
+name: Deploy generated site
+
+on:
+  repository_dispatch:
+    types: [central-publish]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: public-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout generated public files
+        uses: actions/checkout@v4
+        with:
+          ref: site
+          path: public-site
+          persist-credentials: false
+      - name: Check static publication
+        run: |
+          test -f public-site/index.html
+          test -f public-site/site-build.json
+          test ! -d public-site/.github
+          test ! -f public-site/site.config.json
+          test ! -f public-site/package.json
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public-site
+      - name: Publish generated site
+        id: deployment
+        uses: actions/deploy-pages@v4

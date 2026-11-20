@@ -1,0 +1,9 @@
+.central-links/
+.site/
+node_modules/
+.next/
+out/
+.yarn/
+*.tsbuildinfo
+.DS_Store
+.env*.local

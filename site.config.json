@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "id": "de-fisio",
+  "site": {
+    "origin": "https://defisio.github.io",
+    "basePath": "/links",
+    "language": "pt-BR",
+    "locale": "pt_BR"
+  },
+  "profile": {
+    "name": "Débora Eduarda",
+    "jobTitle": "Fisioterapeuta",
+    "handle": "@deborae.fisio",
+    "bio": "Fisioterapia traumato-ortopédica esportiva, especializada em reabilitação de joelho",
+    "phone": "+5598991328659",
+    "email": "deboraeduardafisio@gmail.com",
+    "address": {
+      "city": "São Luís",
+      "region": "MA",
+      "country": "BR",
+      "postalCode": "65000-000"
+    },
+    "geo": { "latitude": -2.5297, "longitude": -44.2963 },
+    "socialProfiles": [
+      "https://www.instagram.com/deborae.fisio",
+      "https://wa.me/5598991328659"
+    ],
+    "knowsAbout": [
+      "Fisioterapia Traumato-Ortopédica",
+      "Fisioterapia Esportiva",
+      "Reabilitação de Joelho",
+      "LCA - Ligamento Cruzado Anterior",
+      "Menisco",
+      "Condromalácia Patelar",
+      "Reabilitação Pós-Operatório"
+    ]
+  },
+  "assets": {
+    "avatar": { "src": "/avatar.png", "alt": "Foto de Débora Eduarda", "width": 120, "height": 120 },
+    "logo": { "src": "/DE-Reduzida-Typo-Branco.png", "alt": "Logo de Débora Eduarda", "width": 250, "height": 250 },
+    "favicon": "/DE-Reduzida.svg",
+    "socialImage": { "src": "/DE3-Logo-Branco.png", "alt": "Fisioterapeuta Débora Eduarda", "width": 120, "height": 120 }
+  },
+  "theme": {
+    "home": {
+      "background": "220 20% 7%",
+      "foreground": "210 20% 92%",
+      "card": "220 18% 10%",
+      "primary": "168 70% 50%",
+      "primaryForeground": "220 20% 7%",
+      "secondary": "220 15% 15%",
+      "secondaryForeground": "210 20% 80%",
+      "mutedForeground": "210 10% 55%",
+      "border": "220 15% 18%"
+    },
+    "timer": {
+      "background": "#090e0d",
+      "card": "#101715",
+      "surface": "#171e1b",
+      "border": "#28312b",
+      "text": "#f0f2eb",
+      "muted": "#8e9b92",
+      "accent": "#c4f58a",
+      "onAccent": "#15240b",
+      "accentHover": "#d3ffa3",
+      "glow": "#23332255"
+    }
+  },
+  "links": [
+    { "id": "whatsapp", "icon": "whatsapp", "href": "https://wa.me/5598991328659", "label": "WhatsApp", "description": "Fale comigo diretamente", "showInFooter": true },
+    { "id": "instagram", "icon": "instagram", "href": "https://instagram.com/deborae.fisio/", "label": "Instagram", "description": "@deborae.fisio", "showInFooter": true },
+    { "id": "email", "icon": "email", "href": "mailto:deboraeduardafisio@gmail.com", "label": "E-mail", "description": "deboraeduardafisio@gmail.com", "showInFooter": true },
+    { "id": "tabata", "icon": "timer", "href": "/timer/", "label": "Tabata Timer", "description": "Seu tempo, seu ritmo. Monte seu treino.", "feature": "tabata" }
+  ],
+  "features": { "tabata": true },
+  "seo": {
+    "title": "Débora Eduarda - Fisioterapeuta em São Luís do Maranhão | Especialista em Joelho",
+    "description": "Fisioterapeuta Débora Eduarda em São Luís - MA. Especialista em fisioterapia traumato-ortopédica esportiva e reabilitação de joelho. Agende sua consulta.",
+    "socialDescription": "Especialista em reabilitação de joelho e fisioterapia traumato-ortopédica esportiva. Agende sua consulta.",
+    "twitterTitle": "Débora Eduarda - Fisioterapeuta em São Luís do Maranhão",
+    "twitterDescription": "Especialista em reabilitação de joelho e fisioterapia traumato-ortopédica esportiva.",
+    "websiteDescription": "Fisioterapeuta Débora Eduarda em São Luís do Maranhão. Especialista em fisioterapia traumato-ortopédica esportiva e reabilitação de joelho.",
+    "personDescription": "Fisioterapeuta especialista em reabilitação de joelho, fisioterapia traumato-ortopédica esportiva em São Luís do Maranhão.",
+    "googleSiteVerification": "TlZ4Y09nkyMSakKU7FCUMyLwufE3v8tM6siD7ADIOR0",
+    "business": {
+      "name": "Débora Eduarda - Fisioterapeuta Especialista em Joelho",
+      "alternateName": "Fisioterapia Joelho São Luís",
+      "description": "Fisioterapeuta especialista em joelho em São Luís do Maranhão. Tratamento de LCA, menisco, condromalácia patelar, fisioterapia traumato-ortopédica e esportiva. Reabilitação pós-operatório de joelho.",
+      "priceRange": "$$",
+      "specialties": ["Fisioterapia Ortopédica", "Fisioterapia Esportiva", "Reabilitação de Joelho"],
+      "sameAs": ["https://www.instagram.com/deborae.fisio"],
+      "areaServed": [
+        { "type": "City", "name": "São Luís", "url": "https://www.wikidata.org/wiki/Q28441" },
+        { "type": "State", "name": "Maranhão", "url": "https://www.wikidata.org/wiki/Q42362" }
+      ],
+      "services": [
+        { "name": "Reabilitação de Joelho", "description": "Tratamento especializado para lesões de joelho incluindo LCA, menisco e condromalácia" },
+        { "name": "Fisioterapia Pós-Operatório", "description": "Reabilitação após cirurgias de joelho" },
+        { "name": "Fisioterapia Esportiva", "description": "Tratamento e prevenção de lesões esportivas" }
+      ]
+    }
+  },
+  "timer": {
+    "name": "Tabata Timer · Débora Eduarda",
+    "shortName": "Tabata · DE",
+    "description": "Seu tempo, seu ritmo. Monte treinos intervalados, acompanhe cada fase e salve suas rotinas neste navegador. Timer com voz, séries e uso offline.",
+    "installDescription": "Seu tempo, seu ritmo. Timer de treino intervalado.",
+    "socialDescription": "Um intervalo de cada vez. Seu timer de treino, com a sua rotina.",
+    "twitterDescription": "Seu tempo, seu ritmo. Um timer de treino que acompanha você.",
+    "icons": {
+      "svg": "/timer/icon.svg",
+      "small": "/timer/icon-192.png",
+      "large": "/timer/icon-512.png",
+      "maskable": "/timer/icon-maskable.png"
+    }
+  }
+}

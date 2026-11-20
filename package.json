@@ -1,0 +1,15 @@
+{
+  "name": "physiotherapist-links",
+  "private": true,
+  "engines": { "node": ">=20.19" },
+  "scripts": {
+    "dev": "node scripts/site.mjs dev",
+    "build": "node scripts/site.mjs build",
+    "start": "node scripts/site.mjs start",
+    "test": "node scripts/site.mjs test",
+    "typecheck": "node scripts/site.mjs typecheck",
+    "check:config": "node scripts/site.mjs check:config",
+    "check:site-export": "node scripts/site.mjs check:site-export",
+    "sync": "node scripts/site.mjs sync"
+  }
+}
