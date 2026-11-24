@@ -2,7 +2,7 @@
 const ROOT = new URL("./", self.location.href).pathname;
 // CacheStorage is shared by every site on the origin. Only clean this scope.
 const CACHE_PREFIX = `tabata-offline:${ROOT}:`;
-const CACHE = `${CACHE_PREFIX}2Yn5Ui4a593a1KnurgYQ2`;
+const CACHE = `${CACHE_PREFIX}Lb0hi0P_apUs7qEixkN3C`;
 const ICON_PATHS = new Set(["/links/timer/icon.svg","/links/timer/icon-192.png","/links/timer/icon-512.png","/links/timer/icon-maskable.png"]);
 const BASE = new URL("../", self.location.href).pathname;
 const APP = ROOT;
