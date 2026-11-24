@@ -184,6 +184,83 @@
       "large": "/timer/icon-512.png",
       "maskable": "/timer/icon-maskable.png"
     },
-    "shareUrl": "https://defisio.github.io/links/timer/"
+    "shareUrl": "https://defisio.github.io/links/timer/",
+    "defaultWorkouts": [
+      {
+        "id": "bike",
+        "workout": {
+          "name": "Bike",
+          "sets": 1,
+          "repetitions": 1,
+          "preparation": 10,
+          "exercise": 300,
+          "rest": 30,
+          "setRest": 0,
+          "warmup": 0,
+          "cooldown": 0,
+          "exercises": []
+        }
+      },
+      {
+        "id": "intervalos-60-20",
+        "workout": {
+          "name": "6 rep · 1min · 20s",
+          "sets": 1,
+          "repetitions": 6,
+          "preparation": 10,
+          "exercise": 60,
+          "rest": 20,
+          "setRest": 0,
+          "warmup": 0,
+          "cooldown": 0,
+          "exercises": []
+        }
+      },
+      {
+        "id": "intervalos-10-10",
+        "workout": {
+          "name": "10 rep · 10s · 10s",
+          "sets": 1,
+          "repetitions": 10,
+          "preparation": 10,
+          "exercise": 10,
+          "rest": 10,
+          "setRest": 0,
+          "warmup": 0,
+          "cooldown": 0,
+          "exercises": []
+        }
+      },
+      {
+        "id": "intervalos-20-10",
+        "workout": {
+          "name": "10 rep · 20s · 10s",
+          "sets": 1,
+          "repetitions": 10,
+          "preparation": 10,
+          "exercise": 20,
+          "rest": 10,
+          "setRest": 0,
+          "warmup": 0,
+          "cooldown": 0,
+          "exercises": []
+        }
+      },
+      {
+        "id": "intervalos-30-20",
+        "workout": {
+          "name": "10 rep · 30s · 20s",
+          "sets": 1,
+          "repetitions": 10,
+          "preparation": 10,
+          "exercise": 30,
+          "rest": 20,
+          "setRest": 0,
+          "warmup": 0,
+          "cooldown": 0,
+          "exercises": []
+        }
+      }
+    ]
   }
 }
