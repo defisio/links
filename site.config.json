@@ -185,6 +185,7 @@
       "maskable": "/timer/icon-maskable.png"
     },
     "shareUrl": "https://defisio.github.io/links/timer/",
+    "defaultWorkoutsFolderName": "Treinos DE",
     "defaultWorkouts": [
       {
         "id": "bike",
